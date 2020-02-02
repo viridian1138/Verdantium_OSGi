@@ -58,15 +58,15 @@ import verdantium.xapp.JpApplicationAdapter;
 public class HelloWorld extends JpApplicationAdapter {
 
 	/**
-	 * Gets the GUI.
-	 * @return The GUI.
-	 */
+	* Returns the GUI for the component.
+    * @return The GUI.
+	*/
 	public JComponent getGUI() {
 		return (this);
 	}
 
 	/**
-	 * Constructs the HelloWorld component.
+	 * Constructs the component.
 	 */
 	public HelloWorld() {
 		JLabel lab = new JLabel("Hello World");
@@ -79,10 +79,9 @@ public class HelloWorld extends JpApplicationAdapter {
 	}
 
 	/**
-	 * Returns the data flavors for which the component can load itself from
-	 * persistent storage.
-	 * @return The data flavors.
-	 */
+	* Returns the data flavors that the component can load from persistent storage.
+    * @return The supported flavors.
+	*/
 	public static DataFlavor[] getPersistentInputDataFlavorsSupported() {
 		DataFlavor[] MyF = { new TransVersionBufferFlavor("Hello World",
 				"Hello World") };
@@ -90,10 +89,9 @@ public class HelloWorld extends JpApplicationAdapter {
 	}
 
 	/**
-	 * Returns the data flavors for which the component can save its data to
-	 * persistent storage.
-	 * @return The data flavors.
-	 */
+	* Returns the data flavors that the component can save to persistent storage.
+    * @return The supported flavors.
+	*/
 	public DataFlavor[] getPersistentOutputDataFlavorsSupported() {
 		DataFlavor[] MyF = { new TransVersionBufferFlavor("Hello World",
 				"Hello World") };
@@ -101,10 +99,10 @@ public class HelloWorld extends JpApplicationAdapter {
 	}
 
 	/**
-	 * Loads persistent data for the component.
-	 * @param flavor The flavor under which to load.
-	 * @param trans The transferable from which to load the data.
-	 */
+	* Loads data for the component from persistent storage.
+    * @param flavor The flavor in which to load the data.
+    * @param trans The transferable from which to load the data.
+	*/
 	public void loadPersistentData(DataFlavor flavor, Transferable trans)
 			throws IOException {
 		if (trans == null) {
@@ -119,9 +117,10 @@ public class HelloWorld extends JpApplicationAdapter {
 	}
 
 	/**
-	 * Saves persistent data for the component.
-	 * @param flavor The flavor under which to save.
-	 */
+	* Saves the component to persistent storage.
+    * @param The flavor in which to save the data.
+    * @return Transferable to which the data is saved.
+	*/
 	public Transferable savePersistentData(DataFlavor flavor) {
 		TransVersionBuffer MyF = new TransVersionBuffer("Hello World",
 				"Hello World");
@@ -129,17 +128,17 @@ public class HelloWorld extends JpApplicationAdapter {
 	}
 
 	/**
-	 * Optional method to display help in a component.
-	 * @param in The invoking component.
-	 */
+	* Optional method to display help in a component.
+    * @param in The component in which to display the help.
+	*/
 	public static void displayVerdantiumHelp(VerdantiumComponent in) {
 		HelloWorldHelp.run(in);
 	}
 
 	/**
-	 * Allows HelloWorld to be run as an application.
-	 * @param argv The input arguments.
-	 */
+	* Allows the component to be run as an application.
+    * @param Input parameters for running application.
+	*/
 	public static void main(String argv[]) {
 		ProgramDirector.initUI();
 		HelloWorld MyComp = new HelloWorld();

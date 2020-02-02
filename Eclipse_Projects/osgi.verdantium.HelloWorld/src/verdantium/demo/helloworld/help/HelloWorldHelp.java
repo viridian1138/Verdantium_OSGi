@@ -32,7 +32,7 @@ import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 
 
 /**
- * Help for HelloWorld.
+ * Online help class for HelloWorld.
  * 
  * @author tgreen
  *
@@ -40,17 +40,17 @@ import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 public class HelloWorldHelp extends WrappingScrollingVerdantiumHelp {
 
 	/**
-	 * Constructor.
-	 * @param in Input URL.
-	 */
+     * Constructs the help page.
+     * @param in The URL of the help content page.
+     */
 	public HelloWorldHelp(URL in) {
 		super(in);
 	}
 
-	/**
-	 * Invokes property editor for help.
-	 * @param in The invoking component.
-	 */
+	 /**
+     * Displays the help page.
+     * @param in The component in which to display the help page.
+     */
 	public static void run(VerdantiumComponent in) {
 		URL u = HelloWorldHelp.class.getResource("HelloWorldHelpPage.rtf");
 		JComponent frm = null;
@@ -67,6 +67,14 @@ public class HelloWorldHelp extends WrappingScrollingVerdantiumHelp {
 			HelloWorld MyC = new HelloWorld();
 			insertComponent(MyC);
 		}
+	}
+	
+    /**
+     * Displays the help in a top-level window.
+     * @param in Input parameters; not used.
+     */
+	public static void main(String[] in) {
+		run(null);
 	}
 
 	

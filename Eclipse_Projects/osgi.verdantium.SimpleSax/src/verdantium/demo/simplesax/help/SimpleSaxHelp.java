@@ -1,4 +1,4 @@
-package verdantium.demo.simpleform.help;
+package verdantium.demo.simplesax.help;
 
 import java.net.URL;
 
@@ -6,12 +6,12 @@ import javax.swing.JComponent;
 
 import verdantium.ProgramDirector;
 import verdantium.VerdantiumComponent;
-import verdantium.demo.simpleform.SimpleForm;
+import verdantium.demo.simplesax.SimpleSax;
 import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 
 //$$strtCprt
 /*
- Simple Form demo program by Thorn Green
+ Simple SAX demo program by Thorn Green
  Copyright (C) 2007 Thorn Green
 
  This program is free software; you can redistribute it and/or modify
@@ -44,6 +44,7 @@ import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 *    |                       |                                                 |                                                                      |
 *    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 07/22/2002            | Thorn Green (viridian_1138@yahoo.com)           | Demonstrate support for XML.                                         | Created SimpleSax from modifications to SimpleForm.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -62,44 +63,44 @@ import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 */
 
 /**
- * Online help class for SimpleForm.
+ * Online help class for SimpleSax.
  * 
  * @author tgreen
  *
  */
-public class SimpleFormHelp extends WrappingScrollingVerdantiumHelp {
+public class SimpleSaxHelp extends WrappingScrollingVerdantiumHelp {
 
-    /**
+	/**
      * Constructs the help page.
      * @param in The URL of the help content page.
      */
-	public SimpleFormHelp(URL in) {
+	public SimpleSaxHelp(URL in) {
 		super(in);
 	}
 
-    /**
+	 /**
      * Displays the help page.
      * @param in The component in which to display the help page.
      */
 	public static void run(VerdantiumComponent in) {
-		URL u = SimpleFormHelp.class.getResource("SimpleFormHelpPage.rtf");
+		URL u = SimpleSaxHelp.class.getResource("SimpleSaxHelpPage.rtf");
 		JComponent frm = null;
 		if (in != null)
 			frm = in.getGUI();
-		SimpleFormHelp hlp = new SimpleFormHelp(u);
-		ProgramDirector.showPropertyEditor(hlp, frm, "Simple Form Help");
+		SimpleSaxHelp hlp = new SimpleSaxHelp(u);
+		ProgramDirector.showPropertyEditor(hlp, frm, "Simple Sax Help");
 		hlp.parseElements();
 	}
 
-    @Override
+	@Override
 	protected void dispatchAction(String txt) {
 		if (txt.equals("comp")) {
-			SimpleForm myC = new SimpleForm();
-			insertComponent(myC);
+			SimpleSax MyC = new SimpleSax();
+			insertComponent(MyC);
 		}
 	}
 
-    /**
+	/**
      * Displays the help in a top-level window.
      * @param in Input parameters; not used.
      */
@@ -107,6 +108,5 @@ public class SimpleFormHelp extends WrappingScrollingVerdantiumHelp {
 		run(null);
 	}
 
-	
 }
 

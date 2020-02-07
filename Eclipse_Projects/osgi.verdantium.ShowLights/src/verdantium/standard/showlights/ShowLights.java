@@ -213,6 +213,9 @@ public class ShowLights extends JcApplicationAdapter implements ActionListener {
 	 */
 	transient protected boolean aniTurnedOff = false;
 
+	/**
+	 * The data model for multi-level undo.
+	 */
 	protected pdx_ShowLightsModel_pdx_ObjectRef model = null;
 
 	/**

@@ -1,0 +1,122 @@
+
+
+package verdantium.standard.flowbox;
+
+
+/*$$strtCprt*/
+/*
+    FlowBox diagram animation by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+class FlowBoxModel
+{
+	protected boolean onlyDesignerEdits;
+	protected int img_size;
+	protected int tbl_size;
+	protected int tbl_delay;
+	protected int num_frames;
+	protected int currentMode;
+	protected jobj endColor;
+	protected jobj midColor;
+	protected jobj startColor;
+	
+	public boolean isOnlyDesignerEdits()
+		{ onlyDesignerEdits };
+		
+	public milieu setOnlyDesignerEdits( boolean in )
+		{ onlyDesignerEdits := in };
+
+    public int getResolution( )
+    	{ img_size };
+    	
+    public milieu setResolution( int in )
+    	{ img_size := in };
+    	
+    public int getColorTableSize( )
+    	{ tbl_size };
+    	
+    public milieu setColorTableSize( int in )
+    	{ tbl_size := in };
+    	
+    public int getDelay( )
+    	{ tbl_delay };
+    	
+    public milieu setDelay( int in )
+    	{ tbl_delay := in };
+    	
+    public int getNumFrames( )
+    	{ num_frames };
+    	
+    public milieu setNumFrames( int in )
+    	{ num_frames := in };
+    	
+    public int getEditMode( )
+    	{ currentMode };
+    	
+    public milieu setEditMode( int in )
+    	{ currentMode := in };
+    	
+    public jobj getEndColor( )
+    	{ endColor };
+    	
+    public milieu setEndColor( jobj in )
+    	{ endColor := in };
+    	
+    public jobj getMidColor( )
+    	{ midColor };
+    	
+    public milieu setMidColor( jobj in )
+    	{ midColor := in };
+    	
+    public jobj getStartColor( )
+    	{ startColor };
+    	
+    public milieu setStartColor( jobj in )
+    	{ startColor := in };
+		
+	public static pair[ FlowBoxModel ] new_FlowBoxModel( boolean _onlyDesignerEdits ,
+    	int _img_size ,
+	    int _tbl_size ,
+	    int _tbl_delay ,
+	    int _num_frames ,
+	    int _currentMode ,
+	    jobj _endColor ,
+	    jobj _midColor ,
+	    jobj _startColor )
+	{
+		seq now into
+		{
+			pair[ FlowBoxModel ] gpair = FlowBoxModel.allocate_FlowBoxModel();
+			FlowBoxModel model = gpair.cobj;
+			model.setOnlyDesignerEdits( _onlyDesignerEdits );
+			model.setResolution( _img_size );
+			model.setColorTableSize( _tbl_size );
+			model.setDelay( _tbl_delay );
+			model.setNumFrames( _num_frames );
+			model.setEditMode( _currentMode );
+			model.setEndColor( _endColor );
+			model.setMidColor( _midColor );
+			model.setStartColor( _startColor );
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

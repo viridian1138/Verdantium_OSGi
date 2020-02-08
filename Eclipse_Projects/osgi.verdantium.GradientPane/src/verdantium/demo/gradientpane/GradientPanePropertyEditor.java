@@ -225,7 +225,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	protected void addTabs(EtherEventPropertySource in, Properties inp) {}
 
 	/**
-	* Adds the tabs to the property editor needed to display ShowLights-specific properties.
+	* Adds the tabs to the property editor needed to display GradientPane-specific properties.
 	* @param in The property source from which to define the tabs.
 	* @param inp Properties defining which tabs to display.
 	*/
@@ -267,7 +267,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	/**
 	* Constructs the property editor.
 	* @param in The component to be edited.
-	* @param inp 
+	* @param inp Properties defining which tabs to display.
 	*/
 	public GradientPanePropertyEditor(GradientPane in, Properties inp) {
 		super(in, inp);

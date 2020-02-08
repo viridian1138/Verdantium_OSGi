@@ -168,7 +168,8 @@ public class GradientPane extends JcApplicationAdapter {
 	protected boolean vertical = true;
 
 	/**
-	 * Gets the GUI used to draw "Gradient Pane".
+	 * Returns the GUI of the component.
+	 * @return The GUI of the component.
 	 */
 	public JComponent getGUI() {
 		return (this);

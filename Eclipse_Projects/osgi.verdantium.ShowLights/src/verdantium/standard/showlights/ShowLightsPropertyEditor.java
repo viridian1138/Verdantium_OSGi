@@ -321,7 +321,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	/**
 	* Constructs the property editor.
 	* @param in The component to be edited.
-	* @param inp 
+	* @param inp Properties defining which tabs to display.
 	*/
 	public ShowLightsPropertyEditor(ShowLights in, Properties inp) {
 		super(in, inp);

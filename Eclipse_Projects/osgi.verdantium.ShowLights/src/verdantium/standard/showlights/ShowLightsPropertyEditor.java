@@ -92,31 +92,31 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	/**
 	* ColorCell used to edit the "on" color.
 	*/
-	private ColorCell TopColorCell;
+	private ColorCell topColorCell;
 	/**
 	* ColorCell used to edit the "off" color.
 	*/
-	private ColorCell BottomColorCell;
+	private ColorCell bottomColorCell;
 	/**
 	* TextField used to set the pixel size of each grid.
 	*/
-	private JTextField ResField;
+	private JTextField resField;
 	/**
 	* TextField used to set the pixel inset of each grid cell.
 	*/
-	private JTextField InsetField;
+	private JTextField insetField;
 	/**
 	* TextField used to set the delay used in rendering.
 	*/
-	private JTextField DelayField;
+	private JTextField delayField;
 	/**
 	* TextField used to set the number of frames used in rendering.
 	*/
-	private JTextField NumFramesField;
+	private JTextField numFramesField;
 	/**
 	* The point where the user clicked to create the property editor.
 	*/
-	private Point ClickPoint;
+	private Point clickPoint;
 
 	/**
 	* Flag used to indicate that properties are being updated, and property change events should be ignored.
@@ -128,8 +128,8 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	*/
 	public void handleDestroy() {
 		super.handleDestroy();
-		TopColorCell.handleDestroy();
-		BottomColorCell.handleDestroy();
+		topColorCell.handleDestroy();
+		bottomColorCell.handleDestroy();
 	}
 
 	/**
@@ -150,8 +150,8 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	protected void handleTargetColorChange(PropertyChangeEvent e) {
 		if (!updating) {
 			updating = true;
-			TopColorCell.setColor(target.getTopColor());
-			BottomColorCell.setColor(target.getBottomColor());
+			topColorCell.setColor(target.getTopColor());
+			bottomColorCell.setColor(target.getBottomColor());
 			MyPanel.repaint();
 			updating = false;
 		}
@@ -167,7 +167,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 			try {
 				updating = true;
 				EtherEvent send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsColors, null, target);
-				Object[] param = { target.getBottomColor(), TopColorCell.getColor()};
+				Object[] param = { target.getBottomColor(), topColorCell.getColor()};
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 			}
@@ -189,7 +189,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 			try {
 				updating = true;
 				EtherEvent send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsColors, null, target);
-				Object[] param = { BottomColorCell.getColor(), target.getTopColor()};
+				Object[] param = { bottomColorCell.getColor(), target.getTopColor()};
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 			}
@@ -216,22 +216,22 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 				undoMgr.prepareForTempCommit(utag);
 
 				EtherEvent send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsResolution, null, target);
-				Integer param = new Integer(ResField.getText());
+				Integer param = new Integer(resField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsInset, null, target);
-				param = new Integer(InsetField.getText());
+				param = new Integer(insetField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsDelay, null, target);
-				param = new Integer(DelayField.getText());
+				param = new Integer(delayField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this, ShowLights.setShowLightsNumFrames, null, target);
-				param = new Integer(NumFramesField.getText());
+				param = new Integer(numFramesField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 				
@@ -256,10 +256,10 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	*/
 	protected void addTabs(EtherEventPropertySource in, Properties inp) {
 		target = (ShowLights) in;
-		TopColorCell = new ColorCell();
-		BottomColorCell = new ColorCell();
-		TopColorCell.setOutlineBorder();
-		BottomColorCell.setOutlineBorder();
+		topColorCell = new ColorCell();
+		bottomColorCell = new ColorCell();
+		topColorCell.setOutlineBorder();
+		bottomColorCell.setOutlineBorder();
 
 		if (!lacksProperty("Scrolling", inp))
 			inp.put("NoTransparent", in);
@@ -270,43 +270,43 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 		TabPane.add("Colors", p3);
 		p3.setLayout(new VerticalLayout(1));
 		p3.add("any", new JLabel("Top Color: "));
-		p3.add("any", TopColorCell.getGUI());
+		p3.add("any", topColorCell.getGUI());
 		p3.add("any", new JLabel("Bottom Color: "));
-		p3.add("any", BottomColorCell.getGUI());
+		p3.add("any", bottomColorCell.getGUI());
 
 		JPanel p4 = new JPanel();
 		TabPane.add("Resolution", p4);
 		p4.setLayout(new BorderLayout(0, 0));
 		JPanel p5 = new JPanel();
 		p5.setLayout(new VerticalLayout(0));
-		ResField = new JTextField("50");
+		resField = new JTextField("50");
 		p4.add("North", p5);
 		p5.add("any", new JLabel("Resolution"));
-		p5.add("any", ResField);
-		InsetField = new JTextField("5");
+		p5.add("any", resField);
+		insetField = new JTextField("5");
 		p5.add("any", new JLabel("Inset (Pixels)"));
-		p5.add("any", InsetField);
-		DelayField = new JTextField("100");
+		p5.add("any", insetField);
+		delayField = new JTextField("100");
 		p5.add("any", new JLabel("Animation Delay (Milliseconds)"));
-		p5.add("any", DelayField);
-		NumFramesField = new JTextField("6");
+		p5.add("any", delayField);
+		numFramesField = new JTextField("6");
 		p5.add("any", new JLabel("Number Of Frames"));
-		p5.add("any", NumFramesField);
+		p5.add("any", numFramesField);
 		JButton ResApplyButton = new JButton("Apply");
 		p4.add("South", ResApplyButton);
 
 		super.addTabs(in, inp);
 
-		TopColorCell.setColor(target.getTopColor());
-		BottomColorCell.setColor(target.getBottomColor());
+		topColorCell.setColor(target.getTopColor());
+		bottomColorCell.setColor(target.getBottomColor());
 
 		ActionListener ButtonL = Adapters.createGActionListener(this, "handleResApplyButton");
 		ResApplyButton.addActionListener(ButtonL);
 
 		ActionListener CellL = Adapters.createGActionListener(this, "handleTopCellColorChange");
-		TopColorCell.addColorActionListener(CellL);
+		topColorCell.addColorActionListener(CellL);
 		CellL = Adapters.createGActionListener(this, "handleBottomCellColorChange");
-		BottomColorCell.addColorActionListener(CellL);
+		bottomColorCell.addColorActionListener(CellL);
 	}
 
 	/**
@@ -315,7 +315,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	*/
 	public void setClickPoint(Point InPt) {
 		super.setClickPoint(InPt);
-		ClickPoint = InPt;
+		clickPoint = InPt;
 	}
 
 	/**
@@ -332,7 +332,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	* @return The top cell color.
 	*/
 	public ColorCell getTopColorCell() {
-		return (TopColorCell);
+		return (topColorCell);
 	}
 
 	/**
@@ -340,7 +340,7 @@ public class ShowLightsPropertyEditor extends DefaultPropertyEditor implements P
 	* @return The bottom cell color.
 	*/
 	public ColorCell getBottomColorCell() {
-		return (BottomColorCell);
+		return (bottomColorCell);
 	}
 
 	/**

@@ -198,8 +198,9 @@ public class MyContainerApp
 
 	/**
 	 * Handles Ether Events to alter the properties of the component.
-	 * @param in The event to be handled.
+	 * @param in The event to handle.
 	 * @param refcon A reference to context data for the event.
+	 * @return The result of handling the event, or null if there is no result.
 	 */
 	public Object processObjEtherEvent(EtherEvent in, Object refcon)
 		throws Throwable {

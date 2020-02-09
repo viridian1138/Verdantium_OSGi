@@ -271,8 +271,8 @@ public class SimpleForm extends Object implements VerdantiumComponent {
 	/**
 	* Handles Ether Events on the component.  Handles requests to change the textfield.
     * @param in The event to handle.
-    * @param refcon Aux. parameter.
-    * @return The result of handling the event.
+    * @param refcon A reference to context data for the event.
+    * @return The result of handling the event, or null if there is no result.
 	*/
 	public Object processObjEtherEvent(EtherEvent in, Object refcon) {
 		if (in instanceof PropertyEditEtherEvent) {

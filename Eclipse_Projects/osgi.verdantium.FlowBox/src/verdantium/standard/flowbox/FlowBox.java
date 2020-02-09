@@ -157,12 +157,12 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	/**
 	 * The current operating mode of the component.
 	 */
-	transient protected int CurrentMode = DownMode;
+	transient protected int currentMode = DownMode;
 
 	/**
 	 * Property change name for a change in the mode of the component..
 	 */
-	public static String FlowBoxMode = "FlowBoxMode";
+	public static final String FlowBoxMode = "FlowBoxMode";
 
 	/**
 	 * Property name indivating that the wave colors have been changed.
@@ -238,17 +238,17 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	/**
 	 * The color of the trough of the wave in the simulation.
 	 */
-	transient protected Color StartColor = new Color(0, 0, 255);
+	transient protected Color startColor = new Color(0, 0, 255);
 
 	/**
 	 * The color of the middle of the wave in the simulation.
 	 */
-	transient protected Color MidColor = new Color(64, 64, 255);
+	transient protected Color midColor = new Color(64, 64, 255);
 
 	/**
 	 * The color of the wave peak in the simulation.
 	 */
-	transient protected Color EndColor = new Color(127, 127, 255);
+	transient protected Color endColor = new Color(127, 127, 255);
 
 	/**
 	 * Indicates whether the component is being animated.
@@ -270,7 +270,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @return The editing mode of the component.
 	 */
 	public int getEditMode() {
-		return (CurrentMode);
+		return (currentMode);
 	}
 
 	/**
@@ -288,12 +288,12 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @param in The editing mode of the component.
 	 */
 	protected void setEditModeComp(int in) {
-		int tmp = CurrentMode;
-		CurrentMode = in;
+		int tmp = currentMode;
+		currentMode = in;
 		createColorTables();
 		repaint();
 		PropL.firePropertyChange(FlowBoxMode, new Integer(tmp), new Integer(
-				CurrentMode));
+				currentMode));
 	}
 
 	/**
@@ -327,8 +327,8 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 		pdx_FlowBoxModel_pdx_PairRef ref = pdx_FlowBoxModel_pdx_ObjectRef
 				.pdxm_new_FlowBoxModel(
 						jundo.runtime.Runtime.getInitialMilieu(), false,
-						img_size, tbl_size, tbl_delay, num_frames, CurrentMode,
-						EndColor, MidColor, StartColor);
+						img_size, tbl_size, tbl_delay, num_frames, currentMode,
+						endColor, midColor, startColor);
 		model = (pdx_FlowBoxModel_pdx_ObjectRef) (ref.getObject());
 		undoMgr = UndoManager.createInstanceUndoManager(ref.getMilieu());
 	}
@@ -411,7 +411,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 			MyTime.start();
 		aniTurnedOff = false;
 
-		boolean vert = (CurrentMode == UpMode) || (CurrentMode == DownMode);
+		boolean vert = (currentMode == UpMode) || (currentMode == DownMode);
 
 		Rectangle MyRect = getBounds();
 		Color[] cols = (Color[]) (color_tables[cur_idex]);
@@ -458,7 +458,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @param idex The index of the table in the animation cycle.
 	 */
 	protected Color[] createColorTable(int idex) {
-		boolean pos = (CurrentMode == UpMode) || (CurrentMode == LeftMode);
+		boolean pos = (currentMode == UpMode) || (currentMode == LeftMode);
 		Color[] cols = new Color[tbl_size];
 		int count;
 		double offset = 2.0 * Math.PI * idex / num_frames;
@@ -475,20 +475,20 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 
 			if (u >= 0.0) {
 				double v = 1.0 - u;
-				red = (int) (v * (MidColor.getRed()) + u * (EndColor.getRed()));
-				green = (int) (v * (MidColor.getGreen()) + u
-						* (EndColor.getGreen()));
-				blue = (int) (v * (MidColor.getBlue()) + u
-						* (EndColor.getBlue()));
+				red = (int) (v * (midColor.getRed()) + u * (endColor.getRed()));
+				green = (int) (v * (midColor.getGreen()) + u
+						* (endColor.getGreen()));
+				blue = (int) (v * (midColor.getBlue()) + u
+						* (endColor.getBlue()));
 			} else {
 				u = u + 1.0;
 				double v = 1.0 - u;
-				red = (int) (v * (StartColor.getRed()) + u
-						* (MidColor.getRed()));
-				green = (int) (v * (StartColor.getGreen()) + u
-						* (MidColor.getGreen()));
-				blue = (int) (v * (StartColor.getBlue()) + u
-						* (MidColor.getBlue()));
+				red = (int) (v * (startColor.getRed()) + u
+						* (midColor.getRed()));
+				green = (int) (v * (startColor.getGreen()) + u
+						* (midColor.getGreen()));
+				blue = (int) (v * (startColor.getBlue()) + u
+						* (midColor.getBlue()));
 			}
 
 			cols[count] = new Color(red, green, blue);
@@ -521,7 +521,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @return The color of the trough of the displayed wave.
 	 */
 	public Color getBottomColor() {
-		return (StartColor);
+		return (startColor);
 	}
 
 	/**
@@ -529,7 +529,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @return The color of the middle of the displayed wave.
 	 */
 	public Color getMidColor() {
-		return (MidColor);
+		return (midColor);
 	}
 
 	/**
@@ -537,7 +537,7 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @return The color of the peak of the displayed wave.
 	 */
 	public Color getTopColor() {
-		return (EndColor);
+		return (endColor);
 	}
 
 	/**
@@ -646,9 +646,9 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 	 * @param End The color of the peak of the wave in the simulation.
 	 */
 	protected void setColorsComp(Color Start, Color Mid, Color End) {
-		StartColor = Start;
-		MidColor = Mid;
-		EndColor = End;
+		startColor = Start;
+		midColor = Mid;
+		endColor = End;
 		createColorTables();
 		repaint();
 		PropL.firePropertyChange(FlowBoxColors, null, null);
@@ -665,8 +665,9 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 
 	/**
 	 * Handles Ether Events to alter the properties of the component.
-	 * @param in The event to be handled.
+	 * @param in The event to handle.
 	 * @param refcon A reference to context data for the event.
+	 * @return The result of handling the event, or null if there is no result.
 	 */
 	public Object processObjEtherEvent(EtherEvent in, Object refcon)
 			throws Throwable {
@@ -812,12 +813,12 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 				setColorTableSize(MyF.getInt("TableSize"));
 				setDelay(MyF.getInt("TableDelay"));
 				setNumFrames(MyF.getInt("NumFrames"));
-				Object mode = MyF.getProperty("CurrentMode");
+				Object mode = MyF.getProperty("currentMode");
 				if (mode instanceof Integer)
 					setEditMode(((Integer) mode).intValue());
 				Color EndColor = (Color) (MyF.getProperty("TopColor"));
 				VersionBuffer.chkNul(EndColor);
-				Color MidColor = (Color) (MyF.getProperty("MidColor"));
+				Color MidColor = (Color) (MyF.getProperty("midColor"));
 				VersionBuffer.chkNul(MidColor);
 				Color StartColor = (Color) (MyF.getProperty("BottomColor"));
 				VersionBuffer.chkNul(StartColor);
@@ -845,10 +846,10 @@ public class FlowBox extends JcApplicationAdapter implements GuiShowNotify,
 		MyF.setInt("TableSize", tbl_size);
 		MyF.setInt("TableDelay", tbl_delay);
 		MyF.setInt("NumFrames", num_frames);
-		MyF.setInt("CurrentMode", CurrentMode);
-		MyF.setProperty("TopColor", EndColor);
-		MyF.setProperty("MidColor", MidColor);
-		MyF.setProperty("BottomColor", StartColor);
+		MyF.setInt("currentMode", currentMode);
+		MyF.setProperty("TopColor", endColor);
+		MyF.setProperty("midColor", midColor);
+		MyF.setProperty("BottomColor", startColor);
 		MyF.setBoolean("OnlyDesignerEdits", isOnlyDesignerEdits());
 		macroMap.writeData(MyF);
 		return (MyF);

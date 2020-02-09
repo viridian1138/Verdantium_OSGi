@@ -95,66 +95,67 @@ import verdantium.utils.VerticalLayout;
  */
 public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 		PropertyChangeListener {
+	
 	/**
 	 * Radio button to set the up mode.
 	 */
-	private JRadioButton UpModeButton;
+	private JRadioButton upModeButton;
 
 	/**
 	 * Radio button to set the down mode.
 	 */
-	private JRadioButton DownModeButton;
+	private JRadioButton downModeButton;
 
 	/**
 	 * Radio button to set the left mode.
 	 */
-	private JRadioButton LeftModeButton;
+	private JRadioButton leftModeButton;
 
 	/**
 	 * Radio button to set the right mode.
 	 */
-	private JRadioButton RightModeButton;
+	private JRadioButton rightModeButton;
 
 	/**
 	 * ColorCell used to edit the peak color of the displayed wave.
 	 */
-	private ColorCell TopColorCell;
+	private ColorCell topColorCell;
 
 	/**
 	 * ColorCell used to edit the middle color of the displayed wave.
 	 */
-	private ColorCell MidColorCell;
+	private ColorCell midColorCell;
 
 	/**
 	 * ColorCell used to edit the bottom color of the dislayed wave.
 	 */
-	private ColorCell BottomColorCell;
+	private ColorCell bottomColorCell;
 
 	/**
 	 * TextField used to set the pixel resolution of the wave display.
 	 */
-	private JTextField ResField;
+	private JTextField resField;
 
 	/**
 	 * TextField used to set the size of the color table.
 	 */
-	private JTextField TableSizeField;
+	private JTextField tableSizeField;
 
 	/**
 	 * TextField used to set the delay used in rendering.
 	 */
-	private JTextField DelayField;
+	private JTextField delayField;
 
 	/**
 	 * TextField used to set the number of frames used in rendering.
 	 */
-	private JTextField NumFramesField;
+	private JTextField numFramesField;
 
 	/**
 	 * The point where the user clicked to create the property editor. Used to
 	 * set wave position.
 	 */
-	private Point ClickPoint;
+	private Point clickPoint;
 
 	/**
 	 * Flag used to indicate that properties are being updated, and property
@@ -168,9 +169,9 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	 */
 	public void handleDestroy() {
 		super.handleDestroy();
-		TopColorCell.handleDestroy();
-		MidColorCell.handleDestroy();
-		BottomColorCell.handleDestroy();
+		topColorCell.handleDestroy();
+		midColorCell.handleDestroy();
+		bottomColorCell.handleDestroy();
 	}
 
 	/**
@@ -197,19 +198,19 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 			updating = true;
 			switch (target.getEditMode()) {
 			case FlowBox.UpMode:
-				UpModeButton.getModel().setSelected(true);
+				upModeButton.getModel().setSelected(true);
 				break;
 
 			case FlowBox.DownMode:
-				DownModeButton.getModel().setSelected(true);
+				downModeButton.getModel().setSelected(true);
 				break;
 
 			case FlowBox.LeftMode:
-				LeftModeButton.getModel().setSelected(true);
+				leftModeButton.getModel().setSelected(true);
 				break;
 
 			case FlowBox.RightMode:
-				RightModeButton.getModel().setSelected(true);
+				rightModeButton.getModel().setSelected(true);
 				break;
 
 			}
@@ -228,13 +229,13 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 			try {
 				if (((JRadioButton) (evt.getSource())).getModel().isSelected()) {
 					updating = true;
-					if (UpModeButton.getModel().isSelected())
+					if (upModeButton.getModel().isSelected())
 						setEditMode(FlowBox.UpMode);
-					if (DownModeButton.getModel().isSelected())
+					if (downModeButton.getModel().isSelected())
 						setEditMode(FlowBox.DownMode);
-					if (LeftModeButton.getModel().isSelected())
+					if (leftModeButton.getModel().isSelected())
 						setEditMode(FlowBox.LeftMode);
-					if (RightModeButton.getModel().isSelected())
+					if (rightModeButton.getModel().isSelected())
 						setEditMode(FlowBox.RightMode);
 				}
 			} catch (Throwable ex) {
@@ -267,9 +268,9 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	protected void handleTargetColorChange(PropertyChangeEvent e) {
 		if (!updating) {
 			updating = true;
-			TopColorCell.setColor(target.getTopColor());
-			MidColorCell.setColor(target.getMidColor());
-			BottomColorCell.setColor(target.getBottomColor());
+			topColorCell.setColor(target.getTopColor());
+			midColorCell.setColor(target.getMidColor());
+			bottomColorCell.setColor(target.getBottomColor());
 			MyPanel.repaint();
 			updating = false;
 		}
@@ -287,7 +288,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 				EtherEvent send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxColors, null, target);
 				Object[] param = { target.getBottomColor(),
-						target.getMidColor(), TopColorCell.getColor() };
+						target.getMidColor(), topColorCell.getColor() };
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 			} catch (Throwable ex) {
@@ -309,7 +310,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 				EtherEvent send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxColors, null, target);
 				Object[] param = { target.getBottomColor(),
-						MidColorCell.getColor(), target.getTopColor() };
+						midColorCell.getColor(), target.getTopColor() };
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 			} catch (Throwable ex) {
@@ -330,7 +331,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 				updating = true;
 				EtherEvent send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxColors, null, target);
-				Object[] param = { BottomColorCell.getColor(),
+				Object[] param = { bottomColorCell.getColor(),
 						target.getMidColor(), target.getTopColor() };
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
@@ -357,25 +358,25 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 
 				EtherEvent send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxResolution, null, target);
-				Integer param = new Integer(ResField.getText());
+				Integer param = new Integer(resField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxColorTableSize, null, target);
-				param = new Integer(TableSizeField.getText());
+				param = new Integer(tableSizeField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxDelay, null, target);
-				param = new Integer(DelayField.getText());
+				param = new Integer(delayField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
 				send = new PropertyEditEtherEvent(this,
 						FlowBox.setFlowBoxNumFrames, null, target);
-				param = new Integer(NumFramesField.getText());
+				param = new Integer(numFramesField.getText());
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
@@ -398,88 +399,88 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	*/
 	protected void addTabs(EtherEventPropertySource in, Properties inp) {
 		target = (FlowBox) in;
-		TopColorCell = new ColorCell();
-		MidColorCell = new ColorCell();
-		BottomColorCell = new ColorCell();
-		TopColorCell.setOutlineBorder();
-		MidColorCell.setOutlineBorder();
-		BottomColorCell.setOutlineBorder();
+		topColorCell = new ColorCell();
+		midColorCell = new ColorCell();
+		bottomColorCell = new ColorCell();
+		topColorCell.setOutlineBorder();
+		midColorCell.setOutlineBorder();
+		bottomColorCell.setOutlineBorder();
 
 		if (!lacksProperty("Scrolling", inp))
 			inp.put("NoTransparent", in);
 
 		inp.put("NoEditControl", in);
 
-		UpModeButton = new JRadioButton("Up");
-		DownModeButton = new JRadioButton("Down");
-		LeftModeButton = new JRadioButton("Left");
-		RightModeButton = new JRadioButton("Right");
+		upModeButton = new JRadioButton("Up");
+		downModeButton = new JRadioButton("Down");
+		leftModeButton = new JRadioButton("Left");
+		rightModeButton = new JRadioButton("Right");
 
 		JPanel p2 = new JPanel();
 		TabPane.add("Flow Direction", p2);
 		p2.setLayout(new VerticalLayout(1));
-		p2.add("any", UpModeButton);
-		p2.add("any", DownModeButton);
-		p2.add("any", LeftModeButton);
-		p2.add("any", RightModeButton);
+		p2.add("any", upModeButton);
+		p2.add("any", downModeButton);
+		p2.add("any", leftModeButton);
+		p2.add("any", rightModeButton);
 
 		JPanel p3 = new JPanel();
 		TabPane.add("Colors", p3);
 		p3.setLayout(new VerticalLayout(1));
 		p3.add("any", new JLabel("Top Color: "));
-		p3.add("any", TopColorCell.getGUI());
+		p3.add("any", topColorCell.getGUI());
 		p3.add("any", new JLabel("Mid Color: "));
-		p3.add("any", MidColorCell.getGUI());
+		p3.add("any", midColorCell.getGUI());
 		p3.add("any", new JLabel("Bottom Color: "));
-		p3.add("any", BottomColorCell.getGUI());
+		p3.add("any", bottomColorCell.getGUI());
 
 		JPanel p4 = new JPanel();
 		TabPane.add("Resolution", p4);
 		p4.setLayout(new BorderLayout(0, 0));
 		JPanel p5 = new JPanel();
 		p5.setLayout(new VerticalLayout(0));
-		ResField = new JTextField("25");
+		resField = new JTextField("25");
 		p4.add("North", p5);
 		p5.add("any", new JLabel("Resolution"));
-		p5.add("any", ResField);
-		TableSizeField = new JTextField("16");
+		p5.add("any", resField);
+		tableSizeField = new JTextField("16");
 		p5.add("any", new JLabel("Table Size"));
-		p5.add("any", TableSizeField);
-		DelayField = new JTextField("100");
+		p5.add("any", tableSizeField);
+		delayField = new JTextField("100");
 		p5.add("any", new JLabel("Animation Delay (Milliseconds)"));
-		p5.add("any", DelayField);
-		NumFramesField = new JTextField("6");
+		p5.add("any", delayField);
+		numFramesField = new JTextField("6");
 		p5.add("any", new JLabel("Number Of Frames"));
-		p5.add("any", NumFramesField);
+		p5.add("any", numFramesField);
 		JButton ResApplyButton = new JButton("Apply");
 		p4.add("South", ResApplyButton);
 
 		super.addTabs(in, inp);
 
-		TopColorCell.setColor(target.getTopColor());
-		MidColorCell.setColor(target.getMidColor());
-		BottomColorCell.setColor(target.getBottomColor());
+		topColorCell.setColor(target.getTopColor());
+		midColorCell.setColor(target.getMidColor());
+		bottomColorCell.setColor(target.getBottomColor());
 
-		UpModeButton.getModel().setSelected(
+		upModeButton.getModel().setSelected(
 				target.getEditMode() == FlowBox.UpMode);
-		DownModeButton.getModel().setSelected(
+		downModeButton.getModel().setSelected(
 				target.getEditMode() == FlowBox.DownMode);
-		LeftModeButton.getModel().setSelected(
+		leftModeButton.getModel().setSelected(
 				target.getEditMode() == FlowBox.LeftMode);
-		RightModeButton.getModel().setSelected(
+		rightModeButton.getModel().setSelected(
 				target.getEditMode() == FlowBox.RightMode);
 
 		ButtonGroup MyGrp = new ButtonGroup();
-		MyGrp.add(UpModeButton);
-		MyGrp.add(DownModeButton);
-		MyGrp.add(LeftModeButton);
-		MyGrp.add(RightModeButton);
+		MyGrp.add(upModeButton);
+		MyGrp.add(downModeButton);
+		MyGrp.add(leftModeButton);
+		MyGrp.add(rightModeButton);
 
 		ItemListener item = Adapters.createGItemListener(this, "handleButton");
-		UpModeButton.addItemListener(item);
-		DownModeButton.addItemListener(item);
-		LeftModeButton.addItemListener(item);
-		RightModeButton.addItemListener(item);
+		upModeButton.addItemListener(item);
+		downModeButton.addItemListener(item);
+		leftModeButton.addItemListener(item);
+		rightModeButton.addItemListener(item);
 
 		ActionListener ButtonL = Adapters.createGActionListener(this,
 				"handleResApplyButton");
@@ -487,13 +488,13 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 
 		ActionListener CellL = Adapters.createGActionListener(this,
 				"handleTopCellColorChange");
-		TopColorCell.addColorActionListener(CellL);
+		topColorCell.addColorActionListener(CellL);
 		CellL = Adapters
 				.createGActionListener(this, "handleMidCellColorChange");
-		MidColorCell.addColorActionListener(CellL);
+		midColorCell.addColorActionListener(CellL);
 		CellL = Adapters.createGActionListener(this,
 				"handleBottomCellColorChange");
-		BottomColorCell.addColorActionListener(CellL);
+		bottomColorCell.addColorActionListener(CellL);
 	}
 
 	/**
@@ -502,7 +503,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	 */
 	public void setClickPoint(Point InPt) {
 		super.setClickPoint(InPt);
-		ClickPoint = InPt;
+		clickPoint = InPt;
 	}
 
 	/**
@@ -519,7 +520,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	 * @return The top color cell of the property editor.
 	 */
 	public ColorCell getTopColorCell() {
-		return (TopColorCell);
+		return (topColorCell);
 	}
 
 	/**
@@ -527,7 +528,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	 * @return The mid color cell of the property editor.
 	 */
 	public ColorCell getMidColorCell() {
-		return (MidColorCell);
+		return (midColorCell);
 	}
 
 	/**
@@ -535,7 +536,7 @@ public class FlowBoxPropertyEditor extends DefaultPropertyEditor implements
 	 * @return The bottom color cell of the property editor.
 	 */
 	public ColorCell getBottomColorCell() {
-		return (BottomColorCell);
+		return (bottomColorCell);
 	}
 
 	/**

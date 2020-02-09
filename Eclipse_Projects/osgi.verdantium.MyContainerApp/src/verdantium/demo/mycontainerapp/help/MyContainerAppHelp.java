@@ -106,9 +106,9 @@ public class MyContainerAppHelp extends WrappingScrollingVerdantiumHelp {
 	
 	private VerdantiumPropertiesEditor Macro1 = null;
 
-	 /**
-     * Displays the help page.
-     * @param in The component in which to display the help page.
+	/**
+     * Constructs the help page.
+     * @param in The URL of the help content page.
      */
 	public MyContainerAppHelp(URL in) {
 		super(in);

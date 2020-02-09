@@ -83,11 +83,11 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	/**
 	* Color editor for the first color.
 	*/
-	private ColorCell CoACell;
+	private ColorCell coACell;
 	/**
 	* Color editor for the second color.
 	*/
-	private ColorCell CoBCell;
+	private ColorCell coBCell;
 	/**
 	* Check box for setting the orientation of the gradient.
 	*/
@@ -104,8 +104,8 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	*/
 	public void handleDestroy() {
 		super.handleDestroy();
-		CoACell.handleDestroy();
-		CoBCell.handleDestroy();
+		coACell.handleDestroy();
+		coBCell.handleDestroy();
 	}
 
 	/**
@@ -130,8 +130,8 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	protected void handleTargetColorChange(PropertyChangeEvent e) {
 		if (!updating) {
 			updating = true;
-			CoACell.setColor(target.getCoA());
-			CoBCell.setColor(target.getCoB());
+			coACell.setColor(target.getCoA());
+			coBCell.setColor(target.getCoB());
 			updating = false;
 			MyPanel.repaint();
 		}
@@ -163,7 +163,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 			try {
 				updating = true;
 				EtherEvent send = new PropertyEditEtherEvent(this, GradientPane.setGradientPaneColors, null, target);
-				Object[] param = { CoACell.getColor(), target.getCoB()};
+				Object[] param = { coACell.getColor(), target.getCoB()};
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 			}
@@ -185,7 +185,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 			try {
 				updating = true;
 				EtherEvent send = new PropertyEditEtherEvent(this, GradientPane.setGradientPaneColors, null, target);
-				Object[] param = { target.getCoA(), CoBCell.getColor()};
+				Object[] param = { target.getCoA(), coBCell.getColor()};
 				send.setParameter(param);
 				ProgramDirector.fireEtherEvent(send, null);
 
@@ -231,10 +231,10 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	*/
 	protected void addTabsSub(EtherEventPropertySource in, Properties inp) {
 		target = (GradientPane) in;
-		CoACell = new ColorCell();
-		CoBCell = new ColorCell();
-		CoACell.setOutlineBorder();
-		CoBCell.setOutlineBorder();
+		coACell = new ColorCell();
+		coBCell = new ColorCell();
+		coACell.setOutlineBorder();
+		coBCell.setOutlineBorder();
 
 		if (!lacksProperty("Scrolling", inp))
 			inp.put("NoTransparent", in);
@@ -243,22 +243,22 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 		TabPane.add("Colors", p3);
 		p3.setLayout(new VerticalLayout(1));
 		p3.add("any", new JLabel("Gradient Color #1 : "));
-		p3.add("any", CoACell.getGUI());
+		p3.add("any", coACell.getGUI());
 		p3.add("any", new JLabel("Gradient Color #2 : "));
-		p3.add("any", CoBCell.getGUI());
+		p3.add("any", coBCell.getGUI());
 		vertical = new JCheckBox("Vertical Gradient", true);
 		p3.add("any", vertical);
 
 		super.addTabs(in, inp);
 
-		CoACell.setColor(target.getCoA());
-		CoBCell.setColor(target.getCoB());
+		coACell.setColor(target.getCoA());
+		coBCell.setColor(target.getCoB());
 		vertical.setSelected(target.getVertical());
 
 		ActionListener CellL = Adapters.createGActionListener(this, "handleCoACellColorChange");
-		CoACell.addColorActionListener(CellL);
+		coACell.addColorActionListener(CellL);
 		CellL = Adapters.createGActionListener(this, "handleCoBCellColorChange");
-		CoBCell.addColorActionListener(CellL);
+		coBCell.addColorActionListener(CellL);
 
 		ActionListener PenL = Adapters.createGActionListener(this, "handleVerticalButton");
 		vertical.addActionListener(PenL);
@@ -279,7 +279,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	* @return The first cell color.
 	*/
 	public ColorCell getCoACell() {
-		return (CoACell);
+		return (coACell);
 	}
 
 	/**
@@ -287,7 +287,7 @@ public class GradientPanePropertyEditor extends DefaultPropertyEditor implements
 	* @return The second cell color.
 	*/
 	public ColorCell getCoBCell() {
-		return (CoBCell);
+		return (coBCell);
 	}
 
 	/**

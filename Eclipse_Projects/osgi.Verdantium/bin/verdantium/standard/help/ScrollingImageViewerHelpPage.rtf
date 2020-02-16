@@ -1,0 +1,181 @@
+{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf330
+{\fonttbl\f0\froman\fcharset77 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12060\viewh13500\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Scrolling Image Viewer\
+
+\fs28 \
+ScrollingImageViewer is a component for displaying GIF or JPEG images.  Initially, the ScrollingImageViewer has a plain appearance as follows:\
+\
+\{%comp%\}\
+\
+\
+Right-Clicking (Apple-Click if you're using a Mac) the component when the EditorControl component is in any mode other than "Edit Mode" and the "Only Designer Edits" flag of the button is false causes the property editor for the component to be displayed as shown below:\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Display Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Display Tab controls how the component will present the displayed image:\
+\
+\
+\{%edit0%\}\
+\
+\
+As shown above, there are four possible ways that the image can be displayed.  These are patterned loosely after the settings for presenting background images in the Display control panel of Microsoft Windows.  The first option, "Center", centers whatever user has selected in the bounds of the component.  The "Tile" option causes multiple copies of the selected image to be tiled across the component.  This is particularly useful when one wants to provide an image background to an overlaying transparent component.  "Stretch" will stretch (or shrink) the image to fit in exactly the bounds of the component.  "Dock" is the default mode for the component.  This mode will cause the image's upper-left corner to be docked at the upper-left corner of the component.  Images in "Dock" mode are displayed at their normal size regardless of the size of the component.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 2.0 Border Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Border tab provides a number of options for editing the border of the component, as illustrated below:\
+\
+\
+\{%edit1%\}\
+\
+\
+The choices signify the different borders that can be placed around the component.  A new border is set around the component by pressing the "Apply" button.  The "No Border" choice signifies a component with no border.  This is the default mode for the component.  "Line Border" is a black border that places a single line around the component.  "Matte Border" places a thicker black border around the component.  "Bevel Border" and "Soft Bevel Border" place two different styles of bevel border around the component.  Finally, "Etched Border" places an etched border around the component similar to that for a JButton.  Additional borders may be loaded using the Discovery component.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 3.0 Background Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Background tab provides a property editor as shown below:\
+\
+\
+\{%edit2%\}\
+\
+\
+The editor for the background property tab allows the user to set the background color and transparency of the component.  Transparency becomes an important characteristic when the component is embedded in other components.  That is to say, the component can be used as a transparent overlay.  The background tab has a ColorCell component near the top that allows the editing of the background color, and a checkbox near the bottom that allows the user to set the transparency of the component.  If the background is set to transparent, the background color is ignored.\
+\
+The background color can be changed by Right-Clicking (Apple-Click if you're using a Mac) on the color cell, producing the color cell property editor shown below:\
+\
+\
+\{%bkcol%\}\
+\
+\
+Along the top of the property editor are three tabs that allow the user to select how the color is to be edited.  The "Swatches" tab provides a pre-defined selection of color choices.  The "HSB" tab provides controls for manipulating the hue, saturation, and brightness of the color.  Finally, the "RGB" tab provides controls for manipulating the color in terms of its red, green, and blue components in an additive color system.\
+\
+In the middle of the property editor is a preview box showing how the selected color will look next to white and black.\
+\
+Toward the bottom of the property editor are "Apply" and "Help" buttons.  The "Help" button displays help for the color cell.  The "Apply" button applies the color selected in the property editor to the color cell.  No changes are made to the color cell until the "Apply" button is pressed.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.0 Authoring Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+There are a number of situations in which the designer of a document would not want an end-user to be able to edit its content.  For instance, one would not want a document displayed at an electronic kiosk to be edited by random individuals who visit the kiosk.  Thus, individuals who design documents need to be able to operate in a different mode from those who use the documents.  The "Only Designer Edits" check box allows the designer of the document to specify that the document should not be user-editable.  That is to say, the document will not be editable then the DesignerControl component is switched to "User Mode".  The authoring tab with its checkbox is shown below:\
+\
+\
+\{%edit3%\}\
+\
+\
+\
+Setting "Only Designer Edits" and "User Mode" simultaneously has the following effects:\
+\
+* The ScrollingImageViewer will not respond to requests to create a property editor.\
+\
+Note that this does not lock any property editors that are already open on the component.  Thus the "locking" of the component is watertight only if the component is not displaying any property editors.  This is a reasonable assumption because the only reason one would want to have a property editor open is to edit the component.  Hence when presenting a component to a group of users one would usually not have the component's property editor running at the same time.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 5.0 Page Size Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Page Size tab allows the user to set the size of the scrolling page in relation to the printer's default page size as shown below:\
+\
+\
+\{%edit4%\}\
+\
+The popup menu at the top of the tabbed pane allows one to set the measurement unit to be used to select the width and height of the page.  The user sets the page size by placing the desired width and height in the appropriate text fields, and pressing the "Apply" button.  The width and height of the page for the default printer are displayed near the bottom of the pane.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 6.0 The ScrollingImageViewer property editor's Pull-Down Menus\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+ScrollingImageViewer has three pull-down menus, "File", "Macro" and "Help," that provide similar functionality to the "File" and "Help" menus in typical windowing applications, as well as a macro scripting capability.  The Help menu has one item called "Help..." that displays this help page.  The other menus are covered in subsequent sections.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 6.1 The File Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The "File" menu has items called "New", "Open...", "Save", "Save As...", "Page Setup...", "Print Preview...", "Print...", "Exit", etc. respectively, and is discussed more in the following paragraphs.\
+\
+In the File menu, the menu item called "New" clears the component to its initial state.  The "Open..." menu item brings up a window that allows the user load files previously saved by the ScrollingImageViewer component.  The same window can also load similarly formatted files from any URL on the network.  Similarly, the "Save As..." menu item brings up a window that allows the user to save the state of the ScrollingImageViewer anywhere on her file system.  The "Save" menu item works in a way similar to the "Save" item in most GUI apps.  Loading a GIF or JPEG image with the "Open..." command causes the ScrollingImageViewer to display that image.\
+\
+The "Print..." menu item brings up a dialog that allows the user to print the document to a printer.  Analogously, "Page Setup..." and "Print Preview..." display page setup and print preview windows respectively.  "Custom Page Setup..." allows a custom page size to be specified independent of the capabilities of the current printer (for instance to print to a poster-sized page).  Finally, the "Exit" menu item allows the user to quit the component.  However, it first brings up a window that allows the user to save the current state of the component.  After this window is dismissed, the component quits.  If the component is an embedded component, the "Exit" command will remove its embedding frame from the parent container.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 6.2 The Edit Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The edit menu contains standard options for undo.\
+\
+Selecting "Undo..." from this menu produces the following undo window:\
+\
+\{%undo0%\}\
+\
+The top button of this window permits undo operations (where possible).  The bottom button of this window permits redo operations (where possible).  Above the button is a pull-down menu labeled "Other".  Activating the pull-down menu reveals two menu items: "Clear Undo Memory" and "Show Undo History...".  Selecting the "Show Undo History..." item displays the following window:\
+\
+\{%undo1%\}\
+\
+This shows the current history of undoable operations that have been performed.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 6.3 The Macro Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Macro menu provides the ability to macro-script the component.  In addition, general multi-component operations can also be recorded.  The Macro menu has two items called "Macros..." and "Record New Macro..." respectively.  Selecting the "Macros..." item brings up the following window for using prevously recorded macros:\
+\
+\
+\{%macro0%\}\
+\
+\
+This window allows one to either run or delete any previously recorded macro.  The procedure is simple.  First, select the desired macro by clicking on its entry in the box titled "Macro Name : ".  After the desired macro is selected, click the "Run" button to run it or the "Delete" button to delete it.\
+\
+To record a new macro, select the "Record New Macro..." menu item from the "Macro" menu.  This produces the following window for creating macros:\
+\
+\
+\{%macro1%\}\
+\
+\
+The procedure for using this window is also straightforward.  First, specify a name for the new macro by typing it in the field titled "Macro Name : ".  Second, hit the record button.  Third, execute the series of actions to be recorded.  Each recorded action will appear in the "Macro : " section of the window.  Fourth, hit the "Stop" button to stop recording.  Finally, press either the "OK" or "Apply" button to store the macro under the specified name.  To exit from the recording process without saving the macro, press the "Cancel" button.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 7.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.standard.ScrollingImageViewer").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+}

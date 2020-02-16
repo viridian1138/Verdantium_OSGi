@@ -1,0 +1,106 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12000\viewh13780\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 File Watcher\
+
+\fs28 \
+FileWatcher is a simple component that embeds a file's contents by reference.  When you save a FileWatcher to disk, the FileWatcher saves the URL of the file instead of the contents of the file.  Then when you load that FileWatcher file, the FileWatcher component re-loads the file from the original URL.  There are several reasons to use this component.  One is to provide links to dynamic content like web pages that need to be re-loaded every time the component is shown (in order to track changes in the web content over time).  Another reason to use FileWatcher is to save space.  Multiple File Watchers can point to a single large, commonly used document.  Because each component contains a URL link rather than the actual document, there is less redundant information stored in the components.  Finally, FileWatcher provides a way to implement a simple "Publish and Subscribe" capability.  Changes to a file can be "Published" by placing the changed version at a particular URL, and then the FileWatcher document will load the changed version each time it is opened.  Initially, the FileWatcher appears as shown below.  Also, the FileWatcher is always transparent so that it will not interfere with the functioning of transparent components in files it loads.\
+\
+\{%comp%\}\
+\
+\
+Right-Clicking (Apple-Click if you're using a Mac) on the FileWatcher causes its property editor to be displayed.  This property editor contains a number of tabs for editing different kinds of properties as shown below.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Link Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The link tab contains a ProgramDirectorPropertyEditor that allows the user to embed a file into the FileWatcher, with the FileWatcher storing the file's URL.  This property editor for adding new components is illustrated below:\
+\
+\
+\{%edit0_0%\}\
+\
+\
+The property editor has two tabs along the top, "Open File" and "Open URL".  The "Open File" tab allows the user to open files saved on her file system.  There are two ways to use this tab.  The first is to put the full path of the desired file into the text field at the top of the pane, and click the "Apply" button.  The second way to use the tab is to click the "Choose File" button.  This will bring up a dialog that allows the user to browse the file tree, and select the desired file visually.  The "Use File Watcher" check box controls whether the file should be loaded using the FileWatcher component.  Most users will usually not want to embed a FileWatcher within a FileWatcher.\
+\
+The "Open URL" tab's controls are shown below:\
+\
+\
+\
+\{%edit0_1%\}\
+\
+\
+This tab allows files to be loaded from any URL on the network.  To use it, enter the desired URL in the textfield at the top of the pane, and click the "Apply" button.  The "Use File Watcher" check box works the same as the one under the "Open File" tab.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 2.0 Border Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Border tab provides a number of options for editing the border of the component, as illustrated below:\
+\
+\
+\{%edit1%\}\
+\
+\
+The choices signify the different borders that can be placed around the component.  A new border is set around the component by pressing the "Apply" button.  The "No Border" choice signifies a component with no border.  This is the default mode for the component.  "Line Border" is a black border that places a single line around the component.  "Matte Border" places a thicker black border around the component.  "Bevel Border" and "Soft Bevel Border" place two different styles of bevel border around the component.  Finally, "Etched Border" places an etched border around the component similar to that for a JButton.  Additional borders may be loaded using the Discovery component.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 3.0 Authoring Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+There are a number of situations in which the designer of a document would not want an end-user to be able to edit its content.  For instance, one would not want a document displayed at an electronic kiosk to be edited by random individuals who visit the kiosk.  Thus, individuals who design documents need to be able to operate in a different mode from those who use the documents.  The "Only Designer Edits" check box allows the designer of the document to specify that the document should not be user-editable.  That is to say, the document will not be editable then the DesignerControl component is switched to "User Mode".  The authoring tab with its checkbox is shown below:\
+\
+\
+\{%edit2%\}\
+\
+\
+\
+Setting "Only Designer Edits" and "User Mode" simultaneously has the following effects:\
+\
+* The component pane no longer accepts editing gestures.\
+\
+* The component pane no longer accepts attempts to display a property editor.\
+\
+* The component, if it is a container application, will act as if the Editor Control component is set to "Edit Mode," regardless of the actual state of the Editor Control.\
+\
+Note that this does not lock any property editors that are already open on the component.  Thus the "locking" of the component is watertight only if the component is not displaying any property editors.  This is a reasonable assumption because the only reason one would want to have a property editor open is to edit the component.  Hence when presenting a component to a group of users one would usually not have the component's property editor running at the same time.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.0 The FileWatcher property editor's Pull-Down Menus\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+FileWatcher has two pull-down menus, "File" and "Help," that provide similar functionality to the "File" and "Help" menus in typical windowing applications.  The "File" menu has items called "New", "Open...", "Save", "Save As...", "Page Setup...", "Print Preview...", "Print...", "Exit", etc. respectively, and is discussed more in the following paragraphs.  The Help menu has one item called "Help..." that displays this help page.\
+\
+In the File menu, the menu item called "New" clears the component to its initial state.  The "Open..." menu item brings up a window that allows the user load files previously saved by the FileWatcher component.  The same window can also load similarly formatted files from any URL on the network.  Similarly, the "Save As..." menu item brings up a window that allows the user to save the state of the FileWatcher anywhere on her file system.  The "Save" menu item works in a way similar to the "Save" item in most GUI apps.\
+\
+\
+The "Print..." menu item brings up a dialog that allows the user to print the document to a printer.  Analogously, "Page Setup..." and "Print Preview..." display page setup and print preview windows respectively.  "Custom Page Setup..." allows a custom page size to be specified independent of the capabilities of the current printer (for instance to print to a poster-sized page).  Finally, the "Exit" menu item allows the user to quit the component.  However, it first brings up a window that allows the user to save the current state of the component.  After this window is dismissed, the component quits.  If the component is an embedded component, the "Exit" command will remove its embedding frame from the parent container.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 5.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.core.FileWatcher").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+\
+}

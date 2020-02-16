@@ -1,0 +1,80 @@
+
+
+package verdantium.pagewelder;
+
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+class PageWelderModel
+{
+	protected int currentIndex;
+	protected int numCards;
+	protected int prevIndex;
+	protected jobj bkgndTemplate;
+	protected jobj bkgndTemplateTrans;
+
+    public int getCurrentIndex( )
+    	{ currentIndex };
+    	
+    public milieu setCurrentIndex( int in )
+    	{ currentIndex := in };
+    	
+    public int getNumCards( )
+    	{ numCards };
+    	
+    public milieu setNumCards( int in )
+    	{ numCards := in };
+    	
+    public int getPrevIndex( )
+    	{ prevIndex };
+    	
+    public milieu setPrevIndex( int in )
+    	{ prevIndex := in };
+    	
+    public jobj getBkgndTemplate( )
+    	{ bkgndTemplate };
+    	
+    public milieu setBkgndTemplate( jobj in )
+    	{ bkgndTemplate := in };
+    	
+    public jobj getBkgndTemplateTrans( )
+    	{ bkgndTemplateTrans };
+    	
+    public milieu setBkgndTemplateTrans( jobj in )
+    	{ bkgndTemplateTrans := in };
+		
+    public static pair[ PageWelderModel ] new_PageWelderModel( )
+	{
+		seq now into
+		{
+			pair[ PageWelderModel ] gpair = PageWelderModel.allocate_PageWelderModel();
+			PageWelderModel model = gpair.cobj;
+			model.setCurrentIndex( 0 );
+			model.setNumCards( 0 );
+			model.setPrevIndex( -1 );
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

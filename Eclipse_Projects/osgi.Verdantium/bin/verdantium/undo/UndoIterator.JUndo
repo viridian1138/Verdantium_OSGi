@@ -1,0 +1,73 @@
+
+
+package verdantium.undo;
+
+
+
+import jundo.util.Iterator;
+
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+class UndoIterator implements Iterator
+{
+
+protected UndoNode curNode;
+protected UndoNode node;
+
+public pair[ boolean ] hasNext()
+    { [ ( node != null ) || ( curNode != null ) , now ] };
+
+public pair[ Object ] next()
+{
+    if curNode != null 
+    then seq now into
+        {
+            Object ret = curNode;
+            curNode := null;
+        }
+        with [ ret , now ] fi
+    else seq now into
+        {
+            Object ret = node;
+            node := node.getNxt();
+        }
+        with [ ret , now ] fi
+    fi
+};
+
+
+public static pair[ UndoIterator ] new_UndoIterator( UndoNode _curNode , UndoNode _node )
+	{
+		seq now into
+		{
+			pair[ UndoIterator ] ndi = UndoIterator.allocate_UndoIterator();
+			( ndi.cobj ).curNode := _curNode;
+			( ndi.cobj ).node := _node;
+		}
+		with [ ndi.cobj , now ] fi
+	};
+
+
+}
+

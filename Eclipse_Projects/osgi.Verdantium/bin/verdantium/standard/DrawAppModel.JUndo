@@ -1,0 +1,118 @@
+
+
+package verdantium.standard;
+
+/*$$strtCprt*/
+/*
+    Drawing application by Thorn Green
+	Copyright (C) 2007 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+import umeta.*;
+
+
+class DrawAppModel
+{
+	protected int currentMode;
+	protected jobj lineColor;
+	protected jobj fillColor;
+	protected HighLevelList drawingList;
+	protected double basicStrokeWidth;
+	protected jobj myStroke;
+        protected int bezMode;
+        protected boolean chordParam;
+	
+	
+	public int getCurrentMode()
+		{ currentMode };
+		
+	public milieu setCurrentMode( int in )
+		{ currentMode := in };
+
+    public jobj getLineColor( )
+    	{ lineColor };
+    	
+    public milieu setLineColor( jobj in )
+    	{ lineColor := in };
+
+    public jobj getFillColor( )
+    	{ fillColor };
+    	
+    public milieu setFillColor( jobj in )
+    	{ fillColor := in };
+    	
+    public HighLevelList getDrawingList()
+        { drawingList };
+
+    public milieu setDrawingList( HighLevelList in )
+        { drawingList := in };
+        
+    public double getBasicStrokeWidth()
+        { basicStrokeWidth };
+
+    public milieu setBasicStrokeWidth( double in )
+        { basicStrokeWidth := in };
+        
+    public jobj getMyStroke()
+        { myStroke };
+
+    public milieu setMyStroke( jobj in )
+        { myStroke := in };
+
+    public int getBezMode()
+        { bezMode };
+
+    public milieu setBezMode( int in )
+        { bezMode := in };
+
+    public boolean getChordParam()
+        { chordParam };
+
+    public milieu setChordParam( boolean in )
+        { chordParam := in };
+		
+
+		
+	public static pair[ DrawAppModel ] new_DrawAppModel( int _currentMode ,
+    	jobj _lineColor ,
+	    jobj _fillColor,
+	    double _basicStrokeWidth,
+	    jobj _myStroke,
+            int _bezMode,
+            boolean _chordParam )
+	{
+		seq now into
+		{
+			pair[ DrawAppModel ] gpair = DrawAppModel.allocate_DrawAppModel();
+			DrawAppModel model = gpair.cobj;
+			model.setCurrentMode( _currentMode );
+			model.setLineColor( _lineColor );
+			model.setFillColor( _fillColor );
+			pair[ HighLevelList ] lst = HighLevelList.new_HighLevelList();
+                        model.setDrawingList( lst.cobj );
+             model.setBasicStrokeWidth( _basicStrokeWidth );
+             model.setMyStroke( _myStroke );
+             model.setBezMode( _bezMode );
+             model.setChordParam( _chordParam );
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

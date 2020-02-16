@@ -1,0 +1,157 @@
+
+
+package verdantium.standard;
+
+/*$$strtCprt*/
+/*
+    Drawing application by Thorn Green
+	Copyright (C) 2007 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+import umeta.*;
+
+
+public abstract class DrawingPolygonalObjectBase extends DrawingObject
+{
+
+	/**
+	* True if the curve or polygon is filled.  False otherwise.
+	*/
+	private boolean filledRender;
+
+        public boolean getFilledRender()
+	    { filledRender };
+	    
+	public milieu setFilledRender( boolean in )
+	    { filledRender := in };
+
+	/**
+	* True if curves are to be rendered.  False if polygons are to be rendered.
+	*/
+	private boolean curveRender;
+
+        public boolean getCurveRender()
+	    { curveRender };
+	    
+	public milieu setCurveRender( boolean in )
+	    { curveRender := in };
+
+	/**
+	* The GeneralPath containing the shape to be rendered.
+	*/
+	private jobj myPath;
+
+        public jobj getMyPath()
+	    { myPath };
+	    
+	public milieu setMyPath( jobj in )
+	    { myPath := in };
+
+	/**
+	* The line color in which the object is to be rendered.
+	*/
+	private jobj lineColor;
+
+        public jobj getLineColor()
+	    { lineColor };
+	    
+	public milieu setLineColor( jobj in )
+	    { lineColor := in };
+
+	/**
+	* The fill color in which the object is to be rendered.
+	*/
+	private jobj fillColor;
+
+        public jobj getFillColor()
+	    { fillColor };
+	    
+	public milieu setFillColor( jobj in )
+	    { fillColor := in };
+
+	/**
+	* The width of the stroke used to render the object.  Holds -1 if the stroke
+	* has not created by the {@link #setBasicStroke} method.
+	*/
+	private double basicStrokeWidth;
+
+        public double getBasicStrokeWidth()
+	    { basicStrokeWidth };
+	    
+	public milieu setBasicStrokeWidth( double in )
+	    { basicStrokeWidth := in };
+
+	/**
+	* The stroke used to render the object.
+	*/
+	private jobj myStroke;
+
+        public jobj getMyStroke()
+	    { myStroke };
+	    
+	public milieu setMyStroke( jobj in )
+	    { myStroke := in };
+
+	/**
+	* The interpolation points of the curve or polygon.
+	*/
+	private jobj prevInt;
+
+        public jobj getPrevInt()
+	    { prevInt };
+	    
+	public milieu setPrevInt( jobj in )
+	    { prevInt := in };
+
+	/**
+	* The Bezier points of the curve.
+	*/
+	private jobj prevBez;
+
+        public jobj getPrevBez()
+	    { prevBez };
+	    
+	public milieu setPrevBez( jobj in )
+	    { prevBez := in };
+
+	/**
+	* The Bezier mode of the curve.  A value of 1 indicates FMILL tangents, a value
+	* of 2 indicates Bessel tangents.
+	*/
+	private int bezMode;
+
+        public int getBezMode()
+	    { bezMode };
+	    
+	public milieu setBezMode( int in )
+	    { bezMode := in };
+
+	/**
+	* True for chord parameters in curve interpolation, false for uniform parameters.
+	*/
+	private boolean chordP;
+
+        public boolean getChordP()
+	    { chordP };
+	    
+	public milieu setChordP( boolean in )
+	    { chordP := in };
+	        
+}
+

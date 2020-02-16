@@ -1,0 +1,193 @@
+
+
+package verdantium.undo;
+
+
+
+import jundo.util.MilieuRef;
+
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+class UndoImpl
+{
+	protected UndoNode undoStk;
+	protected UndoNode redoStk;
+	protected UndoNode currentState; /* nxt always null on currentState */
+	
+	public milieu getCurrentMilieu( )
+	{
+		let
+		{
+			MilieuRef ref = currentState.getState();
+			milieu ret = [ ref , now ].getVal();
+		}
+		with ret fi 
+	};
+	
+	public milieu commitStateAction( MilieuRef newState , jobj undoDesc )
+	{
+	seq now into
+		{
+			UndoNode node = currentState;
+			node.setNxt( undoStk );
+			undoStk := node;
+			pair[ UndoNode ] newPair = [ UndoNode , now ].allocate_UndoNode();
+			UndoNode newNode = newPair.cobj;
+			newNode.setState( newState );
+			newNode.setUndoDesc( undoDesc );
+			currentState := newNode;
+			redoStk := null;
+		}
+		with now fi
+	};
+	
+	public milieu commitNonUndoableState( MilieuRef newState )
+	{
+		seq now into
+		{
+			undoStk := null;
+			redoStk := null;
+			pair[ UndoNode ] newPair = [ UndoNode , now ].allocate_UndoNode();
+			UndoNode newNode = newPair.cobj;
+			newNode.setState( newState );
+			currentState := newNode;
+		}
+		with now fi
+	};
+	
+	public milieu commitOverlay( MilieuRef newState )
+	{
+	    currentState.setState( newState )
+	};
+	
+	public milieu performUndo()
+	{
+		if undoStk != null then performUndoComp()
+			else now fi
+	};
+		
+	protected milieu performUndoComp( )
+	{
+	seq now into
+		{
+		    currentState.setNxt( redoStk );
+			redoStk := currentState;
+			currentState := undoStk;
+			undoStk := undoStk.getNxt();
+			currentState.setNxt( null );
+		}
+		with now fi	
+	};
+	
+	public boolean isUndoPossible()
+		{ undoStk != null };
+	
+	public milieu performRedo()
+	{
+		if redoStk != null then performRedoComp()
+			else now fi
+	};
+	
+	protected milieu performRedoComp( )
+	{
+		seq now into
+		{
+			pair[ UndoNode ] nodep = [ currentState , now ];
+			UndoNode node = nodep.cobj;
+			node.setNxt( undoStk );
+			undoStk := node;
+			currentState := redoStk;
+			redoStk := redoStk.getNxt();			
+		}
+		with now fi
+	};
+	
+	public boolean isRedoPossible()
+		{ redoStk != null };
+	
+	
+	public milieu noteFileSave( )
+	{
+		seq now into
+		{
+			redoStk := null;
+			currentState.setFileSavePoint( true );
+		}
+		with now fi
+	};
+	
+	public boolean isFileSavePoint( )
+	{
+	    if isUndoPossible() then currentState.isFileSavePoint()
+	    	else false fi
+	};
+	
+	public jobj getUndoDesc( )
+	{
+		if undoStk != null then currentState.getUndoDesc()
+		    else null fi
+	};
+	
+	public jobj getRedoDesc( )
+	{
+		if redoStk != null then redoStk.getUndoDesc()
+		    else null fi
+	};
+	
+	public milieu clearUndoMemory( )
+	{
+	    seq now into
+		{
+		    undoStk := null;
+		    redoStk := null;
+		}
+		with now fi	
+	};
+	
+	public pair[ UndoIterator ] iterator( )
+	{
+	    UndoIterator.new_UndoIterator( currentState , undoStk )
+	};
+	
+	
+	
+	public static pair[ UndoImpl ] new_UndoImpl( MilieuRef initialMil )
+	{
+		seq now into
+		{
+			pair[ UndoImpl ] ndi = UndoImpl.allocate_UndoImpl();
+			pair[ UndoNode ] ndu = UndoNode.allocate_UndoNode();
+			( ndi.cobj ).currentState := ndu;
+			( ndu.cobj ).setState( initialMil );
+		}
+		with [ ndi.cobj , now ] fi
+	};
+	
+	
+	
+	
+	
+	
+}
+

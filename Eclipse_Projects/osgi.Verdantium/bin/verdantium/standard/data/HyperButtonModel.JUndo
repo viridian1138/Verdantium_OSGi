@@ -1,0 +1,99 @@
+
+
+package verdantium.standard.data;
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+public class HyperButtonModel
+{
+	protected int imageMode;
+	protected jobj image;
+	protected jobj imageBytes;    
+    
+    protected jobj macroList;
+    protected jobj resultTable;
+    protected int paramVal;   
+    
+    protected jobj labelText;
+    	
+    	
+    	
+    public int getImageMode( )
+    	{ imageMode };
+    	
+    public milieu setImageMode( int in )
+    	{ imageMode := in };
+    	
+    public jobj getImage( )
+    	{ image };
+    	
+    public milieu setImage( jobj in )
+    	{ image := in };
+    	
+    public jobj getImageBytes( )
+    	{ imageBytes };
+    	
+    public milieu setImageBytes( jobj in )
+    	{ imageBytes := in };
+    	
+    
+    
+    public jobj getMacroList( )
+    	{ macroList };
+    	
+    public milieu setMacroList( jobj in )
+    	{ macroList := in };
+    	
+    public jobj getResultTable( )
+    	{ resultTable };
+    	
+    public milieu setResultTable( jobj in )
+    	{ resultTable := in };
+    	
+    public int getParamVal( )
+    	{ paramVal };
+    	
+    public milieu setParamVal( int in )
+    	{ paramVal := in };
+    	
+    	
+    	
+    public jobj getLabelText( )
+    	{ labelText };
+    	
+    public milieu setLabelText( jobj in )
+    	{ labelText := in };
+    
+    
+		
+	public static pair[ HyperButtonModel ] new_HyperButtonModel( )
+	{
+		seq now into
+		{
+			pair[ HyperButtonModel ] gpair = HyperButtonModel.allocate_HyperButtonModel();
+			HyperButtonModel model = gpair.cobj;
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

@@ -1,0 +1,180 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 Times-Roman;}
+{\colortbl;\red255\green255\blue255;}
+\vieww11980\viewh13120\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Internal Desktop\
+
+\fs28 \
+InternalDesktop is a simple component that can manage an MDI desktop containing other components.  Initially, the InternalDesktop has a plain appearance as follows:\
+\
+\{%comp%\}\
+\
+\
+Right-Clicking (Apple-Click if you're using a Mac) on the InternalDesktop causes its property editor to be displayed.  This property editor contains a number of tabs for editing different kinds of properties as shown below.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Windows Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The windows tab contains a ProgramDirectorPropertyEditor that allows the user to insert a component into the InternalDesktop.  The component is inserted into the InternalDesktop at the location in the InternalDesktop where the user right-clicked to create the property editor.  This property editor for inserting adding new components is illustrated below:\
+\
+\
+\{%edit0_0%\}\
+\
+\
+The property editor has three tabs along the top.  The "New" tab allows new instances of a component to be displayed.  Under the new tab is a list of component types followed by the buttons "Apply" and "Help".  Selecting an item from the list, and pressing "Help" will show the help page for that component (if help exists for that particular application).  If no item is selected, or if "Program Director" is selected, clicking help will display a help page for the ProgramDirectorPropertyEditor and the ProgramDirector.  The "Apply" button creates new instances of a component.  To create a new component, select the desired component type from the list and click the "Apply" button.\
+\
+The "Open File" tab of the property editor provides options as shown below:\
+\
+\
+\{%edit0_1%\}\
+\
+\
+The "Open File" tab allows the user to open files saved on her file system.  There are two ways to use this tab.  The first is to put the full path of the desired file into the text field at the top of the pane, and click the "Apply" button.  The second way to use the tab is to click the "Choose File" button.  This will bring up a dialog that allows the user to browse the file tree, and select the desired file visually.  The "Use File Watcher" check box controls whether the file should be loaded using the FileWatcher component.  FileWatcher is a component that stores a reference to the URL of whatever it loads.  This becomes important in the context of embedding because saving a embedded component without a file watcher will save the component's data, while saving a FileWatcher with an embedded component will save the URL reference.  Hence, a FileWatcher will re-load subsequent changes to the original file by reference.  For most naive users, the default setting of the check box will be the proper one.\
+\
+The "Open URL" tab's controls are shown below:\
+\
+\
+\
+\{%edit0_2%\}\
+\
+\
+This tab allows files to be loaded from any URL on the network.  To use it, enter the desired URL in the textfield at the top of the pane, and click the "Apply" button.  The "Use File Watcher" check box works the same as the one under the "Open File" tab.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 2.0 Editor Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+When editing components embedded in a container application such as ContainerApp, DrawApp, or TextApp, a mechanism is needed for the user to tell the system what kind of controls should be displayed.  Take for example an embedded image.  When editing the image, or viewing or printing a document containing an image, the user does not want the controls that resize the image to be part of the display.  However, when attempting to actually move or resize the image these controls become mandatory.  Verdantium addresses this problem by providing a standard control that allows the user to switch between resizing and editing/viewing modes called the Editor Control.  The Editor Control, which runs in the Editor tab of the InternalDesktop property editor, consists of three radio buttons as shown below:\
+\
+\
+\{%edit1%\}\
+\
+\
+Selecting one of the buttons alerts all open container applications that the mode has changed.  \
+\
+The top button, Edit Mode, is the primary mode for presentation and for editing the internal properties of components.  Edit Mode displays the embedded components with no border, and does not allow them to be moved or resized.\
+\
+The middle button, Move Mode, displays full controls for moving and resizing embedded components.  This consists of an MDI window with a title bar, and a resize border.  Dragging the title bar translates the component, and dragging the resize border resizes the component.\
+\
+The bottom button, Resize Mode, displays controls for resizing but not moving the components.  The MDI window displayed by Resize Mode is similar to that displayed in Mode Mode, except that there is no title bar.  Thus the embedded component can only be resized by dragging its border.\
+\
+There is one caveat to keep in mind with regard to editing modes, which is that some components only allow "certain individuals" to edit them.  For instance, someone who has designed an electronic document to be read at a kiosk by multiple people would not want the document to be open to editing by random individuals who happen to walk by that kiosk.  As a result, InternalDesktop has an "Only Designer Edits" mode that prevents the application from displaying move or resize controls on its embedded controls.  This control can be found under the Authoring tab of the property editor.\
+\
+Note that the EditorControl mode has no effect on the InternalDesktop's embedded windows because InternalDesktop's windows are supposed to be "first class" MDI windows on their own virtual desktop rather than embedded frames in a particular type of document.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 3.0 Authoring Tab\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+There are a number of situations in which the designer of a document would not want an end-user to be able to edit its content.  For instance, one would not want a document displayed at an electronic kiosk to be edited by random individuals who visit the kiosk.  Thus, individuals who design documents need to be able to operate in a different mode from those who use the documents.  The "Only Designer Edits" check box allows the designer of the document to specify that the document should not be user-editable.  That is to say, the document will not be editable then the DesignerControl component is switched to "User Mode".  The authoring tab with its checkbox is shown below:\
+\
+\
+\{%edit2%\}\
+\
+\
+\
+Setting "Only Designer Edits" and "User Mode" simultaneously has the following effects:\
+\
+* The component pane no longer accepts editing gestures.\
+\
+* The component pane no longer accepts attempts to display a property editor.\
+\
+* The component, if it is a container application, will act as if the Editor Control component is set to "Edit Mode," regardless of the actual state of the Editor Control.\
+\
+Note that this does not lock any property editors that are already open on the component.  Thus the "locking" of the component is watertight only if the component is not displaying any property editors.  This is a reasonable assumption because the only reason one would want to have a property editor open is to edit the component.  Hence when presenting a component to a group of users one would usually not have the component's property editor running at the same time.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.0 The InternalDesktop property editor's Pull-Down Menus\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+InternalDesktop has three pull-down menus, "File", "Macro" and "Help," that provide similar functionality to the "File" and "Help" menus in typical windowing applications, as well as a macro scripting capability.  The Help menu has one item called "Help..." that displays this help page.  The other menus are covered in subsequent sections.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.1 The File Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The "File" menu has items called "New", "Open...", "Save", "Save As...", "Page Setup...", "Print Preview...", "Print...", "Exit", etc. respectively, and is discussed more in the following paragraphs.\
+\
+In the File menu, the menu item called "New" clears the component to its initial state.  The "Open..." menu item brings up a window that allows the user load files previously saved by the InternalDesktop component.  The same window can also load similarly formatted files from any URL on the network.  Similarly, the "Save As..." menu item brings up a window that allows the user to save the state of the InternalDesktop anywhere on her file system.  The "Save" menu item works in a way similar to the "Save" item in most GUI apps.\
+\
+The "Print..." menu item brings up a dialog that allows the user to print the document to a printer.  Analogously, "Page Setup..." and "Print Preview..." display page setup and print preview windows respectively.  "Custom Page Setup..." allows a custom page size to be specified independent of the capabilities of the current printer (for instance to print to a poster-sized page).  Finally, the "Exit" menu item allows the user to quit the component.  However, it first brings up a window that allows the user to save the current state of the component.  After this window is dismissed, the component quits.  If the component is an embedded component, the "Exit" command will remove its embedding frame from the parent container.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.2 The Edit Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Edit menu supports multi-level undo.  Selecting "Undo..." from this menu produces the following undo window:\
+\
+\{%undo0%\}\
+\
+The top button of this window permits undo operations (where possible).  The bottom button of this window permits redo operations (where possible).  Above the button is a pull-down menu labeled "Other".  Activating the pull-down menu reveals two menu items: "Clear Undo Memory" and "Show Undo History...".  Selecting the "Show Undo History..." item displays the following window:\
+\
+\{%undo1%\}\
+\
+This shows the current history of undoable operations that have been performed.\
+\
+The edit menu also contains standard options for global find and replace.  This allows one to scan through embedded components for a particular search string.  The first command, "Find...", brings up the following dialog:\
+\
+\{%find0%\}\
+\
+Simply place the text to find in the text field, and press "Find Next".  The system will highlight the next item, or display a dialog when no further items matching the search string are present.  The "Match Case" control can be used to indicate that matches should be case-sensitive.  The "Cancel" button takes the dialog off the screen.\
+\
+The dialog for the "Replace..." command (below) adds replace capabilities.  It is a superset of the "Find" dialog shown above.\
+\
+\{%repl0%\}\
+\
+When performing replacements, put the string to replace with in the text field marked "Replace With : ".  Once a selection has been highlighted using "Find Next", press the "Replace" button to replace it.  Pressing "Replace All" replaces all matching strings.\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 4.3 The Macro Menu\
+\pard\pardeftab720\ql\qnatural
+
+\fs28 \cf0 \
+The Macro menu provides the ability to macro-script the component.  In addition, general multi-component operations can also be recorded.  The Macro menu has two items called "Macros..." and "Record New Macro..." respectively.  Selecting the "Macros..." item brings up the following window for using prevously recorded macros:\
+\
+\
+\{%macro0%\}\
+\
+\
+This window allows one to either run or delete any previously recorded macro.  The procedure is simple.  First, select the desired macro by clicking on its entry in the box titled "Macro Name : ".  After the desired macro is selected, click the "Run" button to run it or the "Delete" button to delete it.\
+\
+To record a new macro, select the "Record New Macro..." menu item from the "Macro" menu.  This produces the following window for creating macros:\
+\
+\
+\{%macro1%\}\
+\
+\
+The procedure for using this window is also straightforward.  First, specify a name for the new macro by typing it in the field titled "Macro Name : ".  Second, hit the record button.  Third, execute the series of actions to be recorded.  Each recorded action will appear in the "Macro : " section of the window.  Fourth, hit the "Stop" button to stop recording.  Finally, press either the "OK" or "Apply" button to store the macro under the specified name.  To exit from the recording process without saving the macro, press the "Cancel" button.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 5.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.standard.InternalDesktop").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+}

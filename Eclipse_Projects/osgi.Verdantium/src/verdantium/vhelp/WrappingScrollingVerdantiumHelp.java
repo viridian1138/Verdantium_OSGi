@@ -90,14 +90,17 @@ import verdantium.utils.ScrollableAlt;
 public class WrappingScrollingVerdantiumHelp
 	extends VerdantiumHelp
 	implements BookPrintable {
+	
 	/**
 	* The scrolling pane containing the text app.
 	*/
 	protected JScrollPaneAlt scp;
+	
 	/**
 	* The width of the document page.
 	*/
 	protected int PageWidth = 50;
+	
 	/**
 	* The panel controlling the size of the document pane.
 	*/
@@ -108,9 +111,7 @@ public class WrappingScrollingVerdantiumHelp
 	*/
 	public static final String setPageWidth = "setPageWidth";
 
-	/**
-	* Sets the foreground and background colors of the component.
-	*/
+	@Override
 	public void setColors(Color Fg, Color Bk) {
 		super.setColors(Fg, Bk);
 		scp.setBackground(Bk);
@@ -118,6 +119,7 @@ public class WrappingScrollingVerdantiumHelp
 
 	/**
 	* Constructs the component.
+	* @param in The location of the help page text to be displayed.
 	*/
 	public WrappingScrollingVerdantiumHelp(URL in) {
 		super(in);
@@ -155,9 +157,7 @@ public class WrappingScrollingVerdantiumHelp
 		scp.setBackground(Color.white);
 	}
 
-	/**
-	* Handles EtherEvents on the component.
-	*/
+	@Override
 	public Object processObjEtherEvent(EtherEvent in, Object refcon)
 		throws Throwable {
 		boolean handled = false;
@@ -175,15 +175,14 @@ public class WrappingScrollingVerdantiumHelp
 		return (null);
 	}
 
-	/**
-	* Returns whether the component is scrolling.
-	*/
+	@Override
 	protected boolean isScrolling() {
 		return (true);
 	}
 
 	/**
 	* Gets the component's document page width.
+	* @return The component's document page width.
 	*/
 	public int getPageWidth() {
 		return (PageWidth);
@@ -191,6 +190,7 @@ public class WrappingScrollingVerdantiumHelp
 
 	/**
 	* Sets the component's document page width.
+	* @param in The component's document page width.
 	*/
 	public void setPageWidth(int in) {
 		PageWidth = in;
@@ -198,6 +198,7 @@ public class WrappingScrollingVerdantiumHelp
 
 	/**
 	* Alters the component's document page width including screen representation.
+	* @param in The component's document page width.
 	*/
 	public void alterPageWidth(int in) {
 		setPageWidth(in);
@@ -258,14 +259,18 @@ public class WrappingScrollingVerdantiumHelp
 
 /**
 * Panel that helps to support the scrolling in {@link WrappingScrollingVerdantiumHelp}
+* 
+* @author Thorn Green
 */
 class WrappingScrollingVerdantiumHelpPanel
 	extends JPanel
 	implements Scrollable, ScrollableAlt {
+	
 	/**
 	* The text pane used in the editing.
 	*/
 	JEditorPane MyEdit = null;
+	
 	/**
 	* The scrolling text app. that uses the component.
 	*/
@@ -283,6 +288,7 @@ class WrappingScrollingVerdantiumHelpPanel
 
 	/**
 	* Gets the preferred scrolling viewport size for the component.
+	* @return The preferred scrolling viewport size for the component.
 	*/
 	public Dimension getPreferredScrollableViewportSize() {
 		Dimension d = MyEdit.getPreferredScrollableViewportSize();
@@ -291,7 +297,10 @@ class WrappingScrollingVerdantiumHelpPanel
 	}
 
 	/**
-	* Gets the scrollable unit increment for the component.
+	* Returns the unit increment of the scrolling.
+	* @param visRect The visible rectangle in the scrolling pane.
+	* @param orientation The scrolling orientation.
+	* @param direction The scrolling direction.
 	*/
 	public int getScrollableUnitIncrement(
 		Rectangle visibleRect,
@@ -305,7 +314,10 @@ class WrappingScrollingVerdantiumHelpPanel
 	}
 
 	/**
-	* Gets the scrollable block increment for the component.
+	* Gets the increment for clicking in the scrollbar track.
+	* @param visRect The visible rectangle in the scrolling pane.
+	* @param orientation The scrolling orientation.
+	* @param direction The scrolling direction.
 	*/
 	public int getScrollableBlockIncrement(
 		Rectangle visibleRect,
@@ -320,6 +332,7 @@ class WrappingScrollingVerdantiumHelpPanel
 
 	/**
 	* Gets whether the scrolling tracks the viewport width.
+	* @return Whether the scrolling tracks the viewport width.
 	*/
 	public boolean getScrollableTracksViewportWidth() {
 		return (MyEdit.getScrollableTracksViewportWidth());
@@ -327,23 +340,20 @@ class WrappingScrollingVerdantiumHelpPanel
 
 	/**
 	* Gets whether the scrolling tracks the viewport height.
+	* @return Whether the scrolling tracks the viewport height.
 	*/
 	public boolean getScrollableTracksViewportHeight() {
 		return (MyEdit.getScrollableTracksViewportHeight());
 	}
 
-	/**
-	* Gets the minimum size of the pane.
-	*/
+	@Override
 	public Dimension getMinimumSize() {
 		Dimension d = MyEdit.getMinimumSize();
 		Dimension d2 = new Dimension(MyVerdantiumHelp.getPageWidth(), d.height);
 		return (d2);
 	}
 
-	/**
-	* Gets the preferred size of the pane.
-	*/
+	@Override
 	public Dimension getPreferredSize() {
 		Dimension d = MyEdit.getPreferredSize();
 		Dimension d2 = new Dimension(MyVerdantiumHelp.getPageWidth(), d.height);
@@ -353,16 +363,21 @@ class WrappingScrollingVerdantiumHelpPanel
 	/**
 	* Returns whether the width of the component can track beyond its
 	* preferred size.
+	* @return Whether the width of the component can track beyond its preferred size.
 	*/
 	public boolean getAltTracksWidth() {
 		return (false);
 	}
+	
 	/**
 	* Returns whether the height of the component can track beyond its
 	* preferred size.
+	* @return Whether the height of the component can track beyond its preferred size.
 	*/
 	public boolean getAltTracksHeight() {
 		return (true);
 	}
 
+	
 }
+

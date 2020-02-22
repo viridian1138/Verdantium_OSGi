@@ -100,6 +100,12 @@ public class VerdantiumFileDndTextField extends JTextField {
 		TextFieldDropUtil.setDropUtil(this, tar, src);
 	}
 
+	/**
+	 * Drop-target listener for a JTextField.
+	 * 
+	 * @author tgreen
+	 *
+	 */
 	protected static class TextFieldDropUtil implements DropTargetListener {
 		
 		/**
@@ -163,7 +169,7 @@ public class VerdantiumFileDndTextField extends JTextField {
 
 		/**
 		 * Stub to handle JDK 1.3 DND event.  Not used.
-		 * @param dtde The input event.
+		 * @param dte The input event.
 		 */
 		public void dragExit(DropTargetEvent dte) {}
 

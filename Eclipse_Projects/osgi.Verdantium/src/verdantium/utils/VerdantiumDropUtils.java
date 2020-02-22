@@ -195,7 +195,7 @@ public class VerdantiumDropUtils implements DropTargetListener {
 
 	/**
 	 * Handles an entry into the drop target by a drag and drop operation.
-	 * @param dsde The input event.
+	 * @param dtde The input event.
 	 */
 	public void dragEnter(DropTargetDragEvent dtde) {
 		usingLoad = false;
@@ -203,13 +203,13 @@ public class VerdantiumDropUtils implements DropTargetListener {
 
 	/**
 	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
+	 * @param dte The input event.
 	 */
 	public void dragExit(DropTargetEvent dte) {}
 
 	/**
 	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
+	 * @param dtde The input event.
 	 */
 	public void dragOver(DropTargetDragEvent dtde) {}
 

@@ -1,21 +1,7 @@
-package verdantium.utils;
+package verdantium.kluges;
 
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
-
-import javax.swing.JComponent;
-
-import verdantium.EtherEvent;
-import verdantium.StandardEtherEvent;
-import verdantium.VerdantiumComponent;
-
+import java.awt.Color;
+import java.awt.image.RGBImageFilter;
 
 //$$strtCprt
 /*
@@ -50,7 +36,8 @@ import verdantium.VerdantiumComponent;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 08/04/2004            | Thorn Green (viridian_1138@yahoo.com)           | Support drag-and-drop                                                | Created class.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -70,79 +57,64 @@ import verdantium.VerdantiumComponent;
 
 
 /**
- * 
- * @author thorngreen
- *
- * Experimental class to support drag-and-drop.  Currently not supported.
- */
-public class VerdantiumDragUtils implements DragGestureListener, DragSourceListener {
+* This class is a kluge that makes part of a rendered image transparent.
+* 
+* Basically the notion is to put a transparency switch in the 
+* least-significant bits of the color components.  This was 
+* primarily used back when GeoFrame was generating one semi-transparent
+* sprite image for each Greek symbol (plus superscripts plus subscripts) 
+* that needed to be displayed next to a Vector, Bivector, etc.
+* 
+* @author David Halliday and Thorn Green
+*/
+public class GeoColorFilter extends RGBImageFilter {
 	
 	/**
-	 * The component to receive drag and drop events.
+	 * Mask leaving the RGB portions of the color.
 	 */
-	VerdantiumComponent tar = null;
+	protected static final int RGB_MASK = 0x00ffffff;
+	
+	/**
+	 * Mask leaving the alpha-channel (transparency) portions of the color.
+	 */
+	protected static final int ALPHA_MASK = 0xff000000;
+	
+	/**
+	 * Mask leaving the two most significant bits of each RGB component.
+	 */
+	protected static final int CMASK = 0x00c0c0c0;
+
+	/**
+	 * The color to map from.  Currently not used.
+	 */
+	protected int from;
+	
+	/**
+	 * The color to map to.  Usually transparent or semi-transparent.
+	 */
+	protected int to;
 
 	/**
 	 * Constructor.
-	 * @param in The component to receive drag and drop events.
+	 * @param frm The color to map from.  Currently not used.
+	 * @param t The color to map to.  Usually transparent or semi-transparent.
 	 */
-	public VerdantiumDragUtils(VerdantiumComponent in) {
-		tar = in;
+	public GeoColorFilter(Color frm, Color t) {
+		super();
+		from = frm.getRGB() & RGB_MASK;
+		to = t.getRGB() & RGB_MASK;
+		//  The  filter's  operation  does  not  depend  on  the
+		//  pixel's  location,  so  IndexColorModels  can  be
+		//  filtered  directly.
+		canFilterIndexColorModel = true;
 	}
-
-	/**
-	 * Sets a Verdantium component as receiving drag and drop events on a JComponent.  To be implemented.
-	 * @param in The JComponent.
-	 * @param tar The Verdantium component.
-	 */
-	public static void setDragUtil(JComponent in, VerdantiumComponent tar) {
-		VerdantiumDragUtils utils = new VerdantiumDragUtils(tar);
-		//DragSource ds = new DragSource();
-		//ds.createDefaultDragGestureRecognizer( in , DnDConstants.ACTION_MOVE , utils );
+	
+	@Override
+	public int filterRGB(int x, int y, int rgb) {
+		return (/* ((rgb & CMASK) == ( from & CMASK ) ) */
+		 ((rgb & CMASK) != CMASK) ? (to | (rgb & ALPHA_MASK)) : RGB_MASK);
 	}
-
-	/**
-	 * Handles the recognition of a drag gesture.
-	 * @param dge The input event.
-	 */
-	public void dragGestureRecognized(DragGestureEvent dge) {
-		if (dge.getTriggerEvent().isAltDown()) {
-			Object[] params = { tar, null };
-			EtherEvent send = new StandardEtherEvent(this, StandardEtherEvent.dropComponent, params, tar);
-			Transferable trans = new EtherEventTrans(send);
-			dge.startDrag(null, trans, this);
-		}
-	}
-
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragDropEnd(DragSourceDropEvent dsde) {}
 	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragEnter(DragSourceDragEvent dsde) {}
 	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dse The input event.
-	 */
-	public void dragExit(DragSourceEvent dse) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragOver(DragSourceDragEvent dsde) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dropActionChanged(DragSourceDragEvent dsde) {}
-
 }
 

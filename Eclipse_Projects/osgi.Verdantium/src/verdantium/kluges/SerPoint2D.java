@@ -1,21 +1,12 @@
-package verdantium.utils;
+package verdantium.kluges;
 
-import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
-import java.awt.dnd.DragGestureEvent;
-import java.awt.dnd.DragGestureListener;
-import java.awt.dnd.DragSource;
-import java.awt.dnd.DragSourceDragEvent;
-import java.awt.dnd.DragSourceDropEvent;
-import java.awt.dnd.DragSourceEvent;
-import java.awt.dnd.DragSourceListener;
+import java.awt.geom.Point2D;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
 
-import javax.swing.JComponent;
-
-import verdantium.EtherEvent;
-import verdantium.StandardEtherEvent;
-import verdantium.VerdantiumComponent;
-
+import meta.VersionBuffer;
 
 //$$strtCprt
 /*
@@ -50,7 +41,9 @@ import verdantium.VerdantiumComponent;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 08/04/2004            | Thorn Green (viridian_1138@yahoo.com)           | Support drag-and-drop                                                | Created class.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -68,81 +61,52 @@ import verdantium.VerdantiumComponent;
 *
 */
 
-
 /**
- * 
- * @author thorngreen
- *
- * Experimental class to support drag-and-drop.  Currently not supported.
- */
-public class VerdantiumDragUtils implements DragGestureListener, DragSourceListener {
-	
-	/**
-	 * The component to receive drag and drop events.
-	 */
-	VerdantiumComponent tar = null;
+* Provides a version of the Point2D class that can be saved to serial storage.
+* 
+* @author Thorn Green
+*/
+public class SerPoint2D extends Point2D.Double implements Externalizable {
 
 	/**
-	 * Constructor.
-	 * @param in The component to receive drag and drop events.
-	 */
-	public VerdantiumDragUtils(VerdantiumComponent in) {
-		tar = in;
+	* Constructs the point.
+	*/
+	public SerPoint2D() {
+		super();
 	}
 
 	/**
-	 * Sets a Verdantium component as receiving drag and drop events on a JComponent.  To be implemented.
-	 * @param in The JComponent.
-	 * @param tar The Verdantium component.
-	 */
-	public static void setDragUtil(JComponent in, VerdantiumComponent tar) {
-		VerdantiumDragUtils utils = new VerdantiumDragUtils(tar);
-		//DragSource ds = new DragSource();
-		//ds.createDefaultDragGestureRecognizer( in , DnDConstants.ACTION_MOVE , utils );
+	* Constructs the point with a certain position.
+	* @param x The X-Axis position.
+	* @param y The Y-Axis position.
+	*/
+	public SerPoint2D(double x, double y) {
+		super(x, y);
 	}
 
 	/**
-	 * Handles the recognition of a drag gesture.
-	 * @param dge The input event.
-	 */
-	public void dragGestureRecognized(DragGestureEvent dge) {
-		if (dge.getTriggerEvent().isAltDown()) {
-			Object[] params = { tar, null };
-			EtherEvent send = new StandardEtherEvent(this, StandardEtherEvent.dropComponent, params, tar);
-			Transferable trans = new EtherEventTrans(send);
-			dge.startDrag(null, trans, this);
-		}
+	* Reads the point from serial storage.
+	*/
+	public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
+		VersionBuffer myv = (VersionBuffer) (in.readObject());
+
+		x = myv.getDouble("x");
+		y = myv.getDouble("y");
 	}
 
 	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragDropEnd(DragSourceDropEvent dsde) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragEnter(DragSourceDragEvent dsde) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dse The input event.
-	 */
-	public void dragExit(DragSourceEvent dse) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dragOver(DragSourceDragEvent dsde) {}
-	
-	/**
-	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
-	 */
-	public void dropActionChanged(DragSourceDragEvent dsde) {}
+	* Writes the point to serial storage.
+	* @serialData TBD.
+	*/
+	public void writeExternal(ObjectOutput out) throws IOException {
+		VersionBuffer myv = new VersionBuffer(VersionBuffer.WRITE);
 
+		myv.setDouble("x", x);
+		myv.setDouble("y", y);
+
+		out.writeObject(myv);
+	}
+
+	
 }
 

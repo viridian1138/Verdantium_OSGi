@@ -128,7 +128,7 @@ public class VerdantiumJListDragUtils implements DragGestureListener, DragSource
 	
 	/**
 	 * Stub to handle JDK 1.3 DND event.  Not used.
-	 * @param dsde The input event.
+	 * @param dse The input event.
 	 */
 	public void dragExit(DragSourceEvent dse) {}
 	

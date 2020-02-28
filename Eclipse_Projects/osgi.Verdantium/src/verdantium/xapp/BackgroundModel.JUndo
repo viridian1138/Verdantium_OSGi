@@ -1,0 +1,66 @@
+
+
+package verdantium.xapp;
+
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+class BackgroundModel
+{
+	protected jobj backgroundColor;
+	protected boolean opaqueFlag;
+
+    public jobj getBackgroundColor( )
+    	{ backgroundColor };
+    	
+    public boolean isOpaqueFlag( )
+    	{ opaqueFlag };
+    	
+    public milieu setBackgroundState(
+        jobj _backgroundColor ,
+        boolean _opaqueFlag )
+    {
+    	seq now into
+		{
+			backgroundColor := _backgroundColor;
+			opaqueFlag := _opaqueFlag;
+		}
+		with now fi
+    };
+		
+	public static pair[ BackgroundModel ] new_BackgroundModel( 
+    	jobj _backgroundColor ,
+        boolean _opaqueFlag )
+	{
+		seq now into
+		{
+			pair[ BackgroundModel ] gpair = BackgroundModel.allocate_BackgroundModel();
+			BackgroundModel model = gpair.cobj;
+			model.setBackgroundState( _backgroundColor , 
+			    _opaqueFlag );
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

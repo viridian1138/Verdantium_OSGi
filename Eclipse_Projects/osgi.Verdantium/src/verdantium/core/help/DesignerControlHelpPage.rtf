@@ -1,0 +1,40 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanMS;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12220\viewh13660\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Designer Control\
+
+\fs28 \
+There are a number of situations in which the designer of a document would not want an end-user to be able to edit its content.  For instance, one would not want a document displayed at an electronic kiosk to be edited by random individuals who visit the kiosk.  Thus, individuals who design documents need to be able to operate in a different mode from those who use the documents.  The Designer Control component, illustarted below, provides this ability to set a particular mode.\
+\
+\{%comp%\}\
+\
+Clicking on a radio button informs all container applications (and all other listening applications) that the mode has changed.  Two modes are provided, a "Designer Mode" and a "User Mode".  Setting the mode to "User Mode" does not in itself lock the user out of any functionality.  The designer must also set the "Only Designer Edits" check box in the property editor of each component that she wants to protect.  Setting "Only Designer Edits" and "User Mode" simultaneously has the following effects:\
+\
+* The component pane no longer accepts editing gestures.\
+\
+* The component pane no longer accepts attempts to display a property editor.\
+\
+* The component, if it is a container application, will act as if the Editor Control component is set to "Edit Mode," regardless of the actual state of the Editor Control.\
+\
+Note that this does not lock any property editors that are already open on the component.  Thus the "locking" of the component is watertight only if the component is not displaying any property editors.  This is a reasonable assumption because the only reason one would want to have a property editor open is to edit the component.  Hence when presenting a component to a group of users one would usually not have the component's property editor running at the same time.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.core.DesignerControl").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+\
+}

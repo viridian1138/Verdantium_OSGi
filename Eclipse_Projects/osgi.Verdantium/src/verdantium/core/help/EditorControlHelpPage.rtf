@@ -1,0 +1,40 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanMS;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12320\viewh14040\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Editor Control\
+
+\fs28 \
+When editing components embedded in a container application such as ContainerApp, DrawApp, or TextApp, a mechanism is needed for the user to tell the system what kind of controls should be displayed.  Take for example an embedded image.  When editing the image, or viewing or printing a document containing an image, the user does not want the controls that resize the image to be part of the display.  However, when attempting to actually move or resize the image these controls become mandatory.  Verdantium addresses this problem by providing a standard control that allows the user to switch between resizing and editing/viewing modes called the Editor Control.  The Editor Control consists of three radio buttons as shown below:\
+\
+\{%comp%\}\
+\
+Selecting one of the buttons alerts all open container applications that the mode has changed.  \
+\
+The top button, Edit Mode, is the primary mode for presentation and for editing the internal properties of components.  Edit Mode displays the embedded components with no border, and does not allow them to be moved or resized.\
+\
+The middle button, Move Mode, displays full controls for moving and resizing embedded components.  This consists of an MDI window with a title bar, and a resize border.  Dragging the title bar translates the component, and dragging the resize border resizes the component.\
+\
+The bottom button, Resize Mode, displays controls for resizing but not moving the components.  The MDI window displayed by Resize Mode is similar to that displayed in Mode Mode, except that there is no title bar.  Thus the embedded component can only be resized by dragging its border.\
+\
+There is one caveat to keep in mind with regard to editing modes, which is that some components only allow "certain individuals" to edit them.  For instance, someone who has designed an electronic document to be read at a kiosk by multiple people would not want the document to be open to editing by random individuals who happen to walk by that kiosk.  As a result, several container applications have an "Only Designer Edits" mode that prevents the application from displaying move or resize controls on its embedded controls.  For more information, see the documentation for Designer Control, and for your container application(s).\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.core.EditorControl").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+\
+}

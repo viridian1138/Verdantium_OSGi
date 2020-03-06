@@ -1,0 +1,46 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanMS;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12040\viewh13960\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Macro Recorder\
+
+\fs28 \
+MacroRecorder is a component for recording macros on other components.  The full semantics of the macros that the recorder is able to understand is beyond the scope of this help page.  However, this help page will give a brief introduction to the user interface.  As illustrated below, the MacroRecorder presents a user interface with a text panel at the top, and a series of buttons at the bottom.  The button for the currently active mode of the MacroRecorder (either "Stop" or "Record") is highlighted in green.  Pressing either of these buttons places the MacroRecorder in the appropriate mode.  The other buttons are never highlighted because they execute commands instead of switching modes.  \
+\
+\{%comp%\}\
+\
+\
+When in "Record" mode the MacroRecorder attempts to record a series of macros in a way that can be played again later.  All recorded operations are placed in the text field at the top of the component.  Pressing the "Stop" button places the component in "Stop" mode.  In this mode, the component does not attempt to record any new operations.  The "Play" button plays back any macro operations that have been recorded.  To return the recorder to its initial state, press the "Clear" button.\
+\
+Pressing the "Properties" button on the MacroRecorder causes its property editor to be displayed as illustrated below.  The property editor for the MacroRecorder is limited to two pull-down menus.\
+\
+\
+\{%edit0%\}\
+\
+\
+MacroRecorder has pull-down menus, "File" and "Help," that provide similar functionality to the "File" and "Help" menus in typical windowing applications.  The "File" menu has eight items called "New", "Open...", "Save", "Save As...", "Page Setup...", "Print Preview...", "Print...", and "Exit" respectively, and is discussed more in the following paragraphs.  The Help menu has one item called "Help..." that displays this help page.\
+\
+In the File menu, the menu item called "New" clears the component to its initial state.  The "Open..." menu item brings up a window that allows the user load files previously saved by the MacroRecorder component.  The same window can also load similarly formatted files from any URL on the network.  Similarly, the "Save As..." menu item brings up a window that allows the user to save the state of the MacroRecorder anywhere on her file system.  The "Save" menu item works in a way similar to the "Save" item in most GUI apps.\
+\
+\
+The "Print..." menu item brings up a dialog that allows the user to print the document to a printer.  Analogously, "Page Setup..." and "Print Preview..." display page setup and print preview windows respectively.  "Custom Page Setup..." allows a custom page size to be specified independent of the capabilities of the current printer (for instance to print to a poster-sized page).  Finally, the "Exit" menu item allows the user to quit the component.  However, it first brings up a window that allows the user to save the current state of the component.  After this window is dismissed, the component quits.  If the component is an embedded component, the "Exit" command will remove its embedding frame from the parent container.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.core.MacroRecorder").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+\
+}

@@ -1,11 +1,20 @@
-package verdantium.core;
+package verdantium.standard;
 
-import java.util.Iterator;
+import java.awt.Graphics2D;
+import java.awt.geom.Point2D;
+import java.io.Externalizable;
+import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+
+import meta.DataFormatException;
+import meta.Meta;
+import meta.VersionBuffer;
 
 //$$strtCprt
 /*
      Verdantium compound-document framework by Thorn Green
-	Copyright (C) 2005 Thorn Green
+	Copyright (C) 2007 Thorn Green
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -35,7 +44,12 @@ import java.util.Iterator;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created FindReplaceIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 10/29/2000            | Thorn Green (viridian_1138@yahoo.com)           | Classes did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 06/24/2001            | Thorn Green (viridian_1138@yahoo.com)           | Needed to support drag-manipulations on DrawingObject.               | Added code using the ClickRec/APPRec pattern.
+*    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
+*    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -54,20 +68,58 @@ import java.util.Iterator;
 */
 
 /**
-* An iterator for text find/replace operations.
-* 
+* A basic class for a renderable object used by {@link DrawApp}.  The renderable
+* object supports drawing and serialization.  More methods will be added later.
+* <P>
 * @author Thorn Green
 */
-public interface FindReplaceIterator extends Iterator<String> {
-	
+public abstract class DrawingObject {
+
 	/**
-	* Handles a request to replace the currently selected string with this one.
-	* @param in The string with which to replace.
+	* Renders the object.
+	* @param thePort DrawApp providing the context supporting the rendering.
+	* @param g The graphics context in which to render.
+	* @param toolMode The application mode in which to perform the rendering.
 	*/
-	public void replace(String in);
-	
+	public abstract void draw(DrawApp thePort, Graphics2D g, int toolMode);
+
 	/**
-	* Handles the destruction of the iterator.
+	* Renders the object's tools.
+	* @param thePort DrawApp providing the context supporting the rendering.
+	* @param g The graphics context in which to render.
+	* @param toolMode The application mode in which to perform the rendering.
 	*/
-	public void handleDestroy();
+	public abstract void drawTools(DrawApp thePort, Graphics2D g, int toolMode);
+
+	/**
+	 * Handles a mouse-drag operation on the object.
+	 * @param thePort DrawApp providing the context supporting the mouse-drag.
+	 * @param in Description of the display control being dragged.
+	 * @param toolMode The application mode in which to perform the mouse-drag.
+	 * @param inPt The current mouse-drag location.
+	 */
+	public abstract void dragDisplayControl(
+		DrawApp thePort,
+		ClickRec in,
+		int toolMode,
+		Point2D.Double inPt);
+        
+	/**
+	 * Populates the current state of the DrawingObject into an undoable representation.
+	 * @param mil The milieu in which to populate the undoable representation.
+	 * @param out The undoable representation of the DrawingObject's state to be populated.
+	 * @return The milieu resulting from the population of the undoable representation.
+	 */
+        public abstract jundo.runtime.ExtMilieuRef upBuild( jundo.runtime.ExtMilieuRef mil ,
+                pdx_DrawingObject_pdx_ObjectRef out );
+        
+        /**
+         * Creates an undoable representation of the DrawingObject's state.
+         * @param mil The milieu in which to build the undoable representation of the DrawingObject's state.
+         * @return The undoable representation of the DrawingObject's state.
+         */
+        public abstract pdx_DrawingObject_pdx_PairRef upCreate( jundo.runtime.ExtMilieuRef mil );
+
 }
+
+

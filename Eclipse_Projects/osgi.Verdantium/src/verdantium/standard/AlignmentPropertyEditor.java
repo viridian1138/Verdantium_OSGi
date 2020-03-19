@@ -1,26 +1,28 @@
-package verdantium.core;
+package verdantium.standard;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JEditorPane;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
+import javax.swing.JRadioButton;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 
 import meta.WrapRuntimeException;
 import verdantium.Adapters;
 import verdantium.EtherEvent;
-import verdantium.EtherEventPropertySource;
-import verdantium.MessageEditor;
 import verdantium.ProgramDirector;
-import verdantium.VerdantiumComponent;
 import verdantium.VerdantiumUtils;
+import verdantium.core.PropertyEditEtherEvent;
 import verdantium.utils.VerticalLayout;
 import verdantium.xapp.PropertyEditAdapter;
 
@@ -61,9 +63,8 @@ import verdantium.xapp.PropertyEditAdapter;
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
 *    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
 *    | 09/10/2001            | Thorn Green (viridian_1138@yahoo.com)           | Second-Cut at Error Handling.                                        | Second-Cut at Error Handling.
-*    | 12/01/2001            | Thorn Green (viridian_1138@yahoo.com)           | Third-Cut at Error Handling.                                         | Third-Cut at Error Handling.
+*    | 11/01/2001            | Thorn Green (viridian_1138@yahoo.com)           | Needed a way to control paragraph alignments.                        | Created this class by taking code from another class as a template.
 *    | 03/01/2002            | Thorn Green (viridian_1138@yahoo.com)           | EtherEvent performance enhancements.                                 | EtherEvent performance enhancements.
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace Support.                                                | Created FindPropertyEditor using pieces from several other classes.
 *    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
@@ -83,82 +84,116 @@ import verdantium.xapp.PropertyEditAdapter;
 */
 
 /**
-* A property editor for searching a component for all instances of a particular text string.
+* A property editor that allows the size of the document page width to be changed for
+* a client scrolling version of {@link TextApp}.
 * <P>
 * @author Thorn Green
 */
-public class FindPropertyEditor extends PropertyEditAdapter {
+public class AlignmentPropertyEditor extends PropertyEditAdapter {
 	
 	/**
 	* The panel in which the property editor lies.
 	*/
-	protected JPanel myPan = new JPanel();
+	private JPanel myPan = new JPanel();
+	
+	/**
+	* The TextApp being edited.
+	*/
+	private TextApp myPage = null;
+	
+	/**
+	* The document being edited.
+	*/
+	private JEditorPane myDoc = null;
+	
+	/**
+	* Radio button for selecting left justify.
+	*/
+	private JRadioButton leftButton = new JRadioButton("Left Justify");
+	
+	/**
+	* Radio button for selecting center justify.
+	*/
+	private JRadioButton centerButton = new JRadioButton("Center Justify");
+	
+	/**
+	* Radio button for selecting right justify.
+	*/
+	private JRadioButton rightButton = new JRadioButton("Right Justify");
+	
+	/**
+	* Radio button for selecting fill justify.
+	*/
+	private JRadioButton fillButton = new JRadioButton("Fill Justify");
 
 	/**
-	* The check box for match case.
+	* Constructs the property editor for a given TextApp.
+	* @param in The TextApp component being edited.
+	* @param doc The editor pane of the TextApp being edited.
 	*/
-	protected JCheckBox matchCaseCheck = new JCheckBox("MATCH Case", false);
+	public AlignmentPropertyEditor(TextApp in, JEditorPane doc) {
+		myPage = in;
+		myPan.setLayout(new BorderLayout(0, 0));
+		JButton applyButton = new JButton("Apply");
+		JButton okButton = new JButton("OK");
+		JButton cancelButton = new JButton("Cancel");
+		JPanel pan3 = new JPanel();
+		myPan.add(BorderLayout.SOUTH, pan3);
 
-	/**
-	* TextField for entering the search string.
-	*/
-	protected JTextField searchStringField = new JTextField(30);
+		JPanel pan2 = new JPanel();
+		myPan.add(BorderLayout.CENTER, pan2);
+		pan2.setLayout(new VerticalLayout(1));
+		pan2.add("any", new JLabel("Alignment : "));
+		pan2.add("any", leftButton);
+		pan2.add("any", centerButton);
+		pan2.add("any", rightButton);
+		/* pan2.add( "any" , fillButton ); */
 
-	/**
-	* The current find/replace iterator.
-	*/
-	protected FindReplaceIterator findIterator = null;
+		ButtonGroup bg = new ButtonGroup();
+		bg.add(leftButton);
+		bg.add(centerButton);
+		bg.add(rightButton);
+		bg.add(fillButton);
 
-	/**
-	* The data model of the component being searched.
-	*/
-	protected EtherEventPropertySource target = null;
+		leftButton.setSelected(true);
 
-	/**
-	* The last search string used.
-	*/
-	protected String lastSrchString = "";
+		try {
+			StyledDocument styl = (StyledDocument) (doc.getDocument());
+			AttributeSet at =
+				styl
+					.getCharacterElement(doc.getCaretPosition())
+					.getAttributes();
+			SimpleAttributeSet simp = new SimpleAttributeSet(at);
 
-	/**
-	* Constructs the property editor for a given property change source.
-	* @param in The data model of the component being searched.
-	*/
-	public FindPropertyEditor(EtherEventPropertySource in) {
-		target = in;
-		target.addPropertyChangeListener(this);
-		initUI();
-	}
+			int alignment = StyleConstants.getAlignment(simp);
+			if (alignment == StyleConstants.ALIGN_LEFT)
+				leftButton.setSelected(true);
+			if (alignment == StyleConstants.ALIGN_CENTER)
+				centerButton.setSelected(true);
+			if (alignment == StyleConstants.ALIGN_RIGHT)
+				rightButton.setSelected(true);
+			if (alignment == StyleConstants.ALIGN_JUSTIFIED)
+				fillButton.setSelected(true);
+		} catch (Exception ex) {
+			throw (new WrapRuntimeException("Doc. Elem. Failed", ex));
+		}
 
-	/**
-	* Initializes the user interface.
-	*/
-	protected void initUI() {
-		JPanel center = new JPanel();
-		JPanel east = new JPanel();
-		myPan.setLayout(new BorderLayout(2, 2));
-		myPan.add(BorderLayout.CENTER, center);
-		myPan.add(BorderLayout.EAST, east);
+		pan3.setLayout(new FlowLayout());
+		pan3.add(okButton);
+		pan3.add(applyButton);
+		pan3.add(cancelButton);
 
-		center.setLayout(new VerticalLayout(2));
-		JPanel p1 = new JPanel();
-		center.add("any", p1);
-		center.add("any", matchCaseCheck);
-		p1.setLayout(new BorderLayout(0, 0));
-		p1.add(BorderLayout.WEST, new JLabel("Find What : "));
-		p1.add(BorderLayout.CENTER, searchStringField);
+		myPage.addPropertyChangeListener(this);
 
-		east.setLayout(new VerticalLayout(2));
-		JButton findNext = new JButton("Find Next");
-		JButton cancel = new JButton("Cancel");
-		east.add("any", findNext);
-		east.add("any", cancel);
+		ActionListener actL =
+			Adapters.createGActionListener(this, "handleApply");
+		applyButton.addActionListener(actL);
 
-		ActionListener FndL =
-			Adapters.createGActionListener(this, "handleFind");
-		findNext.addActionListener(FndL);
-		ActionListener CanL =
-			Adapters.createGActionListener(this, "handleCancel");
-		cancel.addActionListener(CanL);
+		actL = Adapters.createGActionListener(this, "handleOk");
+		okButton.addActionListener(actL);
+
+		actL = Adapters.createGActionListener(this, "handleCancel");
+		cancelButton.addActionListener(actL);
 	}
 
 	/**
@@ -170,78 +205,55 @@ public class FindPropertyEditor extends PropertyEditAdapter {
 	}
 
 	/**
-	* Handles the destruction of the component by removing appropriate change listeners.
+	* Handles the destruction of the component bu removing appropriate property change listeners.
 	*/
 	public void handleDestroy() {
-		setFindIterator(null);
-		target.removePropertyChangeListener(this);
+		myPage.removePropertyChangeListener(this);
 	}
 
 	/**
-	* Handles a find event.
+	* Handles a button-press event from the Apply button by changing
+	* the size of the client page size handler.
 	* @param e The input event.
 	*/
-	public void handleFind(ActionEvent e) {
-		String srch = searchStringField.getText();
-		if (!(srch.equals(lastSrchString)))
-			setFindIterator(null);
-		lastSrchString = srch;
-
+	public void handleApply(ActionEvent e) {
 		try {
-			if (findIterator == null) {
-				Object[] parameter =
-					{
-						searchStringField.getText(),
-						new Boolean(matchCaseCheck.isSelected())};
-				EtherEvent send =
-					new PropertyEditEtherEvent(
-						this,
-						PropertyEditEtherEvent.createFindReplaceIterator,
-						null,
-						null);
-				send.setParameter(parameter);
+			int alignment = StyleConstants.ALIGN_LEFT;
 
-				try {
-					setFindIterator(
-						(FindReplaceIterator) (target
-							.processObjEtherEvent(send, null)));
-				} catch (Throwable ex) {
-					throw (new WrapRuntimeException("Iterator Failed", ex));
-				}
-			}
+			if (leftButton.isSelected())
+				alignment = StyleConstants.ALIGN_LEFT;
+			if (centerButton.isSelected())
+				alignment = StyleConstants.ALIGN_CENTER;
+			if (rightButton.isSelected())
+				alignment = StyleConstants.ALIGN_RIGHT;
+			if (fillButton.isSelected())
+				alignment = StyleConstants.ALIGN_JUSTIFIED;
 
-			if (findIterator == null)
-				throw (
-					new RuntimeException("findIterator shouldn't be null here."));
-			else {
-				if (findIterator.hasNext()) {
-					Object nxt = findIterator.next();
-				} else {
-					Toolkit.getDefaultToolkit().beep();
-					VerdantiumComponent comp = (VerdantiumComponent) target;
-					JComponent jcomp = null;
-					if (comp != null)
-						jcomp = comp.getGUI();
-					MessageEditor edit =
-						new MessageEditor(
-							target,
-							"Finished Searching",
-							"Finished searching the document.",
-							ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					ProgramDirector.showPropertyEditor(
-						edit,
-						jcomp,
-						"Finished Searching");
-					setFindIterator(null);
-				}
-			}
-		} catch (Exception ex) {
+			EtherEvent send =
+				new PropertyEditEtherEvent(
+					this,
+					TextApp.setParagraphAlignment,
+					null,
+					myPage);
+			Integer param = new Integer(alignment);
+			send.setParameter(param);
+			ProgramDirector.fireEtherEvent(send, null);
+		} catch (Throwable ex) {
 			handleThrow(ex);
 		}
 	}
 
 	/**
-	* Handles a cancel event.
+	* Handles the pressing of the "OK" button.
+	* @param e The input event.
+	*/
+	public void handleOk(ActionEvent e) {
+		handleApply(e);
+		VerdantiumUtils.disposeContainer(this);
+	}
+
+	/**
+	* Handles the pressing of the "Cancel" button.
 	* @param e The input event.
 	*/
 	public void handleCancel(ActionEvent e) {
@@ -249,23 +261,14 @@ public class FindPropertyEditor extends PropertyEditAdapter {
 	}
 
 	/**
-	* Sets the findIterator.
-	* @param in The findIterator to set.
-	*/
-	protected void setFindIterator(FindReplaceIterator in) {
-		if ((findIterator != null) && (findIterator != in))
-			findIterator.handleDestroy();
-		findIterator = in;
-	}
-
-	/**
 	* Handles the throwing of an error or exception.
 	* @param in The input error or exception.
 	*/
 	public void handleThrow(Throwable in) {
-		VerdantiumUtils.handleThrow(in, this, target);
+		VerdantiumUtils.handleThrow(in, myPage, myPage);
 	}
 
 	
 }
+
 

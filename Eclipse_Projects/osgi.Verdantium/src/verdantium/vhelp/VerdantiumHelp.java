@@ -268,7 +268,7 @@ public class VerdantiumHelp
 				"foreground",
 				FgColor)).actionPerformed(
 			e);
-		/* MyEdit.setForeground( Fg ); */
+		/* myEdit.setForeground( Fg ); */
 		MyEdit.repaint();
 		PropL.firePropertyChange(VerdantiumHelpColors, null, null);
 	}

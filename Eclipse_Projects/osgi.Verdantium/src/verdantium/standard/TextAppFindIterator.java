@@ -1,12 +1,16 @@
-package verdantium.pagewelder;
+package verdantium.standard;
 
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.util.Iterator;
 
+import javax.swing.JComponent;
+import javax.swing.JEditorPane;
+import javax.swing.JScrollPane;
+
+import meta.WrapRuntimeException;
 import verdantium.ProgramDirector;
 import verdantium.PropertyChangeSource;
-import verdantium.core.ContainerFindIterator;
 import verdantium.core.FindReplaceIterator;
 
 //$$strtCprt
@@ -42,9 +46,9 @@ import verdantium.core.FindReplaceIterator;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created ContainerFindIterator.
+*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Needed an iterator for text find/replace.                            | Created TextAppFindIterator.
+*    | 04/25/2002            | Thorn Green (viridian_1138@yahoo.com)           | Bug: iterator would sometimes generate bad location exceptions.      | Fixed the bug.
 *    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
-*    | 03/09/2003            | Thorn Green (viridian_1138@yahoo.com)           | PageWelder.                                                          | Implemented PageWelder using code from other classes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -63,26 +67,21 @@ import verdantium.core.FindReplaceIterator;
 */
 
 /**
-* An iterator for container find/replace operations.
+* Returns an iterator for find/replace operations in a component with a JEditorPane.
 * 
 * @author Thorn Green
 */
-public class PageWelderFindIterator
+public class TextAppFindIterator
 	extends Object
 	implements FindReplaceIterator, PropertyChangeListener {
-	
-	/**
-	* The iterator from the current component.
-	*/
-	FindReplaceIterator currentIterator = null;
 
 	/**
-	* The component being edited.
+	* The editor pane to search.
 	*/
-	PageWelder pw = null;
+	JEditorPane myEdit = null;
 
 	/**
-	* The property change source of the component being searched.
+	* The property change source for the text app.
 	*/
 	PropertyChangeSource pcs = null;
 
@@ -92,76 +91,133 @@ public class PageWelderFindIterator
 	int currentIndex = -1;
 
 	/**
-	* Temporary storage for the index of the next iterator.
-	*/
-	int nxtIndex = 0;
-
-	/**
 	* The search parameter.
 	*/
 	Object[] parameter;
 
 	/**
-	* Constructs the iterator.  Takes in the ether parameter description (e.g. the
-	* string to search with), the property change source of the component to be
-	* searched, and the component being edited.
-	* @param param The ether parameter description (e.g. the string to search with).
-	* @param pc The property change source of the component being searched.
-	* @param p The component being edited.
+	* Indicates whether to match case.
 	*/
-	public PageWelderFindIterator(
+	boolean matchCase;
+
+	/**
+	* The search string.
+	*/
+	String sparam;
+
+	/**
+	* The current jump delta.
+	*/
+	int currentJump = 1;
+
+	/**
+	* The top of the GUI for the component being searched.
+	*/
+	JComponent guiTop = null;
+
+	/**
+	* Indicates whether the text app. is scrolling.
+	*/
+	boolean isScrolling = false;
+
+	/**
+	* Constructs the iterator.  Takes in the ether parameter array that describes the details
+	* of the find (e.g. the search string), the property change source of the component to
+	* operate on, the editing pane of the component, the top-level GUI of the component,
+	* and whether the component is scrolling.
+	* @param param The search parameter.
+	* @param pc The property change source for the text app.
+	* @param edit The editor pane to search.
+	* @param gui The top of the GUI for the component being searched.
+	* @param scrolling Indicates whether the text app. is scrolling.
+	*/
+	public TextAppFindIterator(
 		Object[] param,
 		PropertyChangeSource pc,
-		PageWelder p) {
+		JEditorPane edit,
+		JComponent gui,
+		boolean scrolling) {
 		parameter = param;
+		sparam = (String) (param[0]);
+		matchCase = ((Boolean) (param[1])).booleanValue();
 		pcs = pc;
-		pw = p;
+		myEdit = edit;
+		guiTop = gui;
+		isScrolling = scrolling;
 		pcs.addPropertyChangeListener(this);
 	}
 
 	/**
-	* Gets the next iterator from the frame list.
-	* @return The next iterator.
+	* Starts parsing from currentIndex in order to find the next match.  Returns
+	* the index of the next match if one exists, or -2 if there are no further matches.
+	* @param currentIndex The current index from which to start parsing.
+	* @return The index of the next match if one exists, or -2 if there are no further matches.
 	*/
-	protected FindReplaceIterator getNextIteratorComp() {
-		if (pw == null)
-			return (null);
+	protected int parseElements(int currentIndex) {
+		if (myEdit == null)
+			return (-2);
 
-		nxtIndex = currentIndex;
-		int len1 = pw.getNumCards();
-		FindReplaceIterator ret = null;
+		int idx = currentIndex + currentJump;
+		int alen = myEdit.getDocument().getLength();
+		int sidx = idx;
+		int srchlen = sparam.length();
+		boolean found = false;
+		boolean done = false;
 
-		nxtIndex++;
-		while ((nxtIndex < len1) && (ret == null)) {
-			ret =
-				new ContainerFindIterator(
-					parameter,
-					pw,
-					pw.getCardForIndex(nxtIndex));
-
-			if (ret != null) {
-				if (!(ret.hasNext()))
-					ret = null;
-			}
-
-			if (ret == null)
-				nxtIndex++;
+		if (idx == 0) {
+			myEdit.setCaretPosition(0);
+			myEdit.requestFocus();
 		}
 
-		return (ret);
+		if ((idx >= 0) && ((idx + srchlen) < (alen + 1))) {
+			int cnt = idx;
+			String Txt = "";
+			while (!done) {
+				try {
+					Txt = myEdit.getText(cnt, srchlen);
+				} catch (Exception e) {
+					throw (new WrapRuntimeException("Search Failed", e));
+				}
+
+				boolean equals = false;
+
+				if (matchCase) {
+					if (sparam.equals(Txt))
+						equals = true;
+				} else {
+					if (sparam.equalsIgnoreCase(Txt))
+						equals = true;
+				}
+
+				if (equals) {
+					sidx = cnt;
+					found = true;
+					done = true;
+				}
+
+				cnt++;
+				done = done || ((cnt + srchlen) >= (alen + 1));
+			}
+
+		}
+
+		if (!found)
+			sidx = -2;
+
+		return (sidx);
 	}
 
 	/**
 	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator.
+	* @return The next iterator from the frame list.
 	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = getNextIteratorComp();
+	protected int getNext() {
+		int it = parseElements(currentIndex);
 
-		if (it == null) {
-			setCurrentIterator(null);
-			if (pw != null) {
-				pw = null;
+		if (it < 0) {
+			currentIndex = -2;
+			if (myEdit != null) {
+				myEdit = null;
 				pcs.removePropertyChangeListener(this);
 			}
 		}
@@ -174,16 +230,7 @@ public class PageWelderFindIterator
 	* @return Whether there are any remaining elements.
 	*/
 	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
-		}
-
-		Iterator<String> next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
+		return ((getNext()) >= 0);
 	}
 
 	/**
@@ -191,20 +238,18 @@ public class PageWelderFindIterator
 	* @return The next item the iterator traverses over.
 	*/
 	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext()) {
-				pw.switchToIndex(currentIndex);
-				return (currentIterator.next());
-			}
-		}
+		currentIndex = getNext();
 
-		setCurrentIterator(getNextIterator());
-		currentIndex = nxtIndex;
-		if (currentIterator != null) {
-			if (currentIterator.hasNext()) {
-				pw.switchToIndex(currentIndex);
-				return (currentIterator.next());
-			}
+		if (currentIndex >= 0) {
+			myEdit.requestFocus();
+			int srchlen = sparam.length();
+			int eidx = currentIndex + srchlen;
+			currentJump = srchlen;
+			myEdit.setCaretPosition(currentIndex);
+			myEdit.moveCaretPosition(eidx);
+			scrollMultiple(true);
+			myEdit.repaint();
+			return (sparam);
 		}
 
 		return (null);
@@ -219,15 +264,17 @@ public class PageWelderFindIterator
 
 	/**
 	* Replaces the current item in the iterator.
-	* @param in The input string with which to rep[lace the current item.
+	* @param in The string with which to replace the item.
 	*/
 	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
+		if (myEdit != null) {
+			String txt = myEdit.getSelectedText();
+			if (txt != null) {
+				if (txt.equalsIgnoreCase(sparam)) {
+					myEdit.replaceSelection(in);
+					currentJump = in.length();
+				}
+			}
 		}
 	}
 
@@ -237,9 +284,9 @@ public class PageWelderFindIterator
 	*/
 	public void propertyChange(PropertyChangeEvent evt) {
 		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			setCurrentIterator(null);
-			if (pw != null) {
-				pw = null;
+			currentIndex = -2;
+			if (myEdit != null) {
+				myEdit = null;
 				pcs.removePropertyChangeListener(this);
 			}
 		}
@@ -250,23 +297,35 @@ public class PageWelderFindIterator
 	* Handles the destruction of the iterator.
 	*/
 	public void handleDestroy() {
-		setCurrentIterator(null);
-		if (pw != null) {
-			pw = null;
+		currentIndex = -2;
+		if (myEdit != null) {
+			myEdit = null;
 			pcs.removePropertyChangeListener(this);
 		}
 	}
 
 	/**
-	* Sets the current iterator.
-	* @param in The iterator to set.
+	* Scrolls to the proper region in multiple scroll panes.
+	* @param scrolling Indicates whether the text app. is scrolling.
 	*/
-	protected void setCurrentIterator(FindReplaceIterator in) {
-		if ((currentIterator != null) && (currentIterator != in))
-			currentIterator.handleDestroy();
-		currentIterator = in;
+	protected void scrollMultiple(boolean scrolling) {
+		if (isScrolling) {
+			guiTop.scrollRectToVisible(guiTop.getBounds());
+		}
+
+		Component top = guiTop.getParent();
+		while (top != null) {
+			while (!(top instanceof JScrollPane) && (top != null))
+				top = top.getParent();
+
+			if (top != null) {
+				((JScrollPane) top).scrollRectToVisible(top.getBounds());
+				top = top.getParent();
+			}
+		}
 	}
 
 	
 }
+
 

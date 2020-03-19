@@ -1,10 +1,10 @@
-package verdantium.core;
+package verdantium.standard;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import verdantium.ProgramDirector;
 import verdantium.PropertyChangeSource;
+import verdantium.ThrowHandler;
+import verdantium.VerdantiumComponent;
+import verdantium.VerdantiumPropertiesEditor;
+import verdantium.VerdantiumUtils;
 
 //$$strtCprt
 /*
@@ -39,7 +39,8 @@ import verdantium.PropertyChangeSource;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created CompoundFindIterator.
+*    | 11/01/2001            | Thorn Green (viridian_1138@yahoo.com)           | Needed support for paragraph formatting.                             | Created this class to to be thrown upon invalid requests.
+*    | 11/17/2001            | Thorn Green (viridian_1138@yahoo.com)           | UnsupportedDocException handling was not script-compatible.          | Changed the exception to implement ThrowHandler.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -57,176 +58,41 @@ import verdantium.PropertyChangeSource;
 *
 */
 
-
 /**
-* Returns an iterator combining two find/replace iterators.
-* 
+* An exception class for when a TextApp request is not supported
+* by a certain document type.  For instance, asking for a font change
+* in a particular region of a non-Rich-Text ASCII-only document.
+*
 * @author Thorn Green
 */
-public class CompoundFindIterator
-	extends Object
-	implements FindReplaceIterator, PropertyChangeListener {
-	
-	/**
-	* The iterator from the current component.
-	*/
-	FindReplaceIterator currentIterator = null;
+public class UnsupportedDocException
+	extends Exception
+	implements ThrowHandler {
 
 	/**
-	* The first iterator to traverse through.
-	*/
-	FindReplaceIterator i1;
-
-	/**
-	* The second iterator to traverse through.
-	*/
-	FindReplaceIterator i2;
-
-	/**
-	* The property change source for the container app.
-	*/
-	PropertyChangeSource pcs = null;
-
-	/**
-	* The search parameter.
-	*/
-	Object[] parameter;
-
-	/**
-	 * Constructs the iterator.
-	 * @param param The search parameter.
-	 * @param pc The property change source for the container app.
-	 * @param it1 The first iterator to traverse through.
-	 * @param it2 The second iterator to traverse through.
+	 * Constructor.
 	 */
-	public CompoundFindIterator(
-		Object[] param,
-		PropertyChangeSource pc,
-		FindReplaceIterator it1,
-		FindReplaceIterator it2) {
-		parameter = param;
-		pcs = pc;
-		i1 = it1;
-		i2 = it2;
-		currentIterator = i1;
-		pcs.addPropertyChangeListener(this);
+	public UnsupportedDocException() {
 	}
 
 	/**
-	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator from the frame list.
+	* Handles an exception for a Verdantium app. by displaying a message window.
+	* @param in The exception to handle.
+	* @param The component generating the exception.
+	* @param src The data model of the component generating the exception.
 	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = null;
-
-		if (currentIterator == i1)
-			it = i2;
-
-		if (it == null) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
-		return (it);
-	}
-
-	/**
-	* Returns whether there are any remaining elements.
-	* @return Whether there are any remaining elements.
-	*/
-	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
-		}
-
-		FindReplaceIterator next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
-	}
-
-	/**
-	* Gets the next item the iterator traverses over.
-	* @return The next item the iterator traverses over.
-	*/
-	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		currentIterator = getNextIterator();
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		return (null);
-	}
-
-	/**
-	* Removes the current item from the iterator.
-	*/
-	public void remove() {
-		replace("");
-	}
-
-	/**
-	* Replaces the current item in the iterator.
-	* @param in The string with which to replace the current item.
-	*/
-	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
-		}
-	}
-
-	/**
-	* Handles property change events.
-	* @param evt The input event.
-	*/
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
-	}
-
-	/**
-	* Handles the destruction of the iterator.
-	*/
-	public void handleDestroy() {
-		currentIterator = null;
-		if ((i1 != null) && (i2 != null)) {
-			handleIteratorDestroy();
-			pcs.removePropertyChangeListener(this);
-		}
-	}
-
-	/**
-	* Destroys all currently linked iterators.
-	*/
-	protected void handleIteratorDestroy() {
-		if (i1 != null)
-			i1.handleDestroy();
-		if (i2 != null)
-			i2.handleDestroy();
-		currentIterator = null;
-		i1 = null;
-		i2 = null;
+	public VerdantiumPropertiesEditor handleThrow(
+		Throwable in,
+		VerdantiumComponent comp,
+		PropertyChangeSource src) {
+		return (
+			VerdantiumUtils.produceMessageWindow(
+				in,
+				"Operation Not Supported",
+				"Operation Not Supported : ",
+				"The operation you requested is not supported on this kind of document.",
+				comp,
+				src));
 	}
 
 	

@@ -303,11 +303,11 @@ public class BorderObject
 		*/
 	public void writeData(VersionBuffer MyF) {
 		if (getClassName() != null) {
-			MyF.setProperty("BorderClass", getClassName());
+			MyF.setProperty("borderClass", getClassName());
 			MyF.setProperty(
-				"BorderTypes",
+				"borderTypes",
 				BorderPropertyEditor.getTypeStrArray(getBorderTypes()));
-			MyF.setProperty("BorderParam", getBorderParam());
+			MyF.setProperty("borderParam", getBorderParam());
 		}
 	}
 
@@ -316,15 +316,15 @@ public class BorderObject
 	*/
 	public void readData(VersionBuffer MyF)
 		throws DataFormatException, ResourceNotFoundException {
-		Object myo = MyF.getProperty("BorderClass");
+		Object myo = MyF.getProperty("borderClass");
 		if (myo != null) {
 			String BorderClass = (String) myo;
 			VersionBuffer.chkNul(BorderClass);
 			Class<?>[] BorderTypes =
 				(Class<?>[]) (BorderPropertyEditor
-					.getTypeObjArray(MyF.getProperty("BorderTypes")));
+					.getTypeObjArray(MyF.getProperty("borderTypes")));
 			VersionBuffer.chkNul(BorderTypes);
-			Object[] BorderParam = (Object[]) (MyF.getProperty("BorderParam"));
+			Object[] BorderParam = (Object[]) (MyF.getProperty("borderParam"));
 			VersionBuffer.chkNul(BorderParam);
 			setBorderObject(BorderClass, BorderTypes, BorderParam);
 		}

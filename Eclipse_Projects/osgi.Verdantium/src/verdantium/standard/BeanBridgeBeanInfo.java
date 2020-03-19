@@ -1,10 +1,14 @@
-package verdantium.core;
+package verdantium.standard;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import verdantium.ProgramDirector;
-import verdantium.PropertyChangeSource;
+import java.awt.Color;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.beans.BeanDescriptor;
+import java.beans.BeanInfo;
+import java.beans.EventSetDescriptor;
+import java.beans.MethodDescriptor;
+import java.beans.PropertyDescriptor;
 
 //$$strtCprt
 /*
@@ -39,7 +43,8 @@ import verdantium.PropertyChangeSource;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created CompoundFindIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -57,176 +62,118 @@ import verdantium.PropertyChangeSource;
 *
 */
 
-
 /**
-* Returns an iterator combining two find/replace iterators.
+* This is the bean info class for {@link BeanBridge}.  It implements
+* essentially the minimal functionality that a BeanInfo class can
+* support.
 * 
 * @author Thorn Green
 */
-public class CompoundFindIterator
-	extends Object
-	implements FindReplaceIterator, PropertyChangeListener {
+public class BeanBridgeBeanInfo extends Object implements BeanInfo {
 	
 	/**
-	* The iterator from the current component.
+	* Constructs the BeanInfo.
 	*/
-	FindReplaceIterator currentIterator = null;
+	public BeanBridgeBeanInfo() {
+		super();
+	}
 
 	/**
-	* The first iterator to traverse through.
-	*/
-	FindReplaceIterator i1;
-
-	/**
-	* The second iterator to traverse through.
-	*/
-	FindReplaceIterator i2;
-
-	/**
-	* The property change source for the container app.
-	*/
-	PropertyChangeSource pcs = null;
-
-	/**
-	* The search parameter.
-	*/
-	Object[] parameter;
-
-	/**
-	 * Constructs the iterator.
-	 * @param param The search parameter.
-	 * @param pc The property change source for the container app.
-	 * @param it1 The first iterator to traverse through.
-	 * @param it2 The second iterator to traverse through.
+	 * Gets the additional bean info.  Returns null.
+	 * @return The additional bean index.
 	 */
-	public CompoundFindIterator(
-		Object[] param,
-		PropertyChangeSource pc,
-		FindReplaceIterator it1,
-		FindReplaceIterator it2) {
-		parameter = param;
-		pcs = pc;
-		i1 = it1;
-		i2 = it2;
-		currentIterator = i1;
-		pcs.addPropertyChangeListener(this);
-	}
-
-	/**
-	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator from the frame list.
-	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = null;
-
-		if (currentIterator == i1)
-			it = i2;
-
-		if (it == null) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
-		return (it);
-	}
-
-	/**
-	* Returns whether there are any remaining elements.
-	* @return Whether there are any remaining elements.
-	*/
-	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
-		}
-
-		FindReplaceIterator next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
-	}
-
-	/**
-	* Gets the next item the iterator traverses over.
-	* @return The next item the iterator traverses over.
-	*/
-	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		currentIterator = getNextIterator();
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
+	public BeanInfo[] getAdditionalBeanInfo() {
 		return (null);
 	}
 
 	/**
-	* Removes the current item from the iterator.
-	*/
-	public void remove() {
-		replace("");
+	 * Gets the bean descriptor.  Returns null.
+	 * @return The bean descriptor.
+	 */
+	public BeanDescriptor getBeanDescriptor() {
+		return (null);
 	}
 
 	/**
-	* Replaces the current item in the iterator.
-	* @param in The string with which to replace the current item.
+	 * Gets the default property index.
+	 * @return The default property index.
+	 */
+	public int getDefaultPropertyIndex() {
+		return (-1);
+	}
+
+	/**
+	 * Gets the default event index.
+	 * @return The default event index.
+	 */
+	public int getDefaultEventIndex() {
+		return (-1);
+	}
+
+	/**
+	 * Gets the event set descriptors.  Returns null.
+	 * @return The event set descriptors.
+	 */
+	public EventSetDescriptor[] getEventSetDescriptors() {
+		return (null);
+	}
+
+	/**
+	 * Gets the method descriptors. Returns null.
+	 * @return The method descriptors.
+	 */
+	public MethodDescriptor[] getMethodDescriptors() {
+		return (null);
+	}
+
+	/**
+	 * Gets the property descriptors.  Returns null.
+	 * @return The property descriptors.
+	 */
+	public PropertyDescriptor[] getPropertyDescriptors() {
+		return (null);
+	}
+
+	/**
+	* Gets the icon for the BeanBridge.
+	* @return The icon for the BeanBridge.
 	*/
-	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
+	public Image getIcon(int iconKind) {
+		int xm = -1;
+		int ym = -1;
+		Frame MyFr = new Frame();
+		MyFr.addNotify();
+
+		switch (iconKind) {
+			case ICON_COLOR_16x16 :
+				xm = 16;
+				ym = 16;
+				break;
+
+			case ICON_COLOR_32x32 :
+				xm = 32;
+				ym = 32;
+				break;
+
+			case ICON_MONO_16x16 :
+				xm = 16;
+				ym = 16;
+				break;
+
+			case ICON_MONO_32x32 :
+				xm = 32;
+				ym = 32;
+				break;
 		}
-	}
 
-	/**
-	* Handles property change events.
-	* @param evt The input event.
-	*/
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
+		Image img = MyFr.createImage(xm, ym);
 
-	}
-
-	/**
-	* Handles the destruction of the iterator.
-	*/
-	public void handleDestroy() {
-		currentIterator = null;
-		if ((i1 != null) && (i2 != null)) {
-			handleIteratorDestroy();
-			pcs.removePropertyChangeListener(this);
-		}
-	}
-
-	/**
-	* Destroys all currently linked iterators.
-	*/
-	protected void handleIteratorDestroy() {
-		if (i1 != null)
-			i1.handleDestroy();
-		if (i2 != null)
-			i2.handleDestroy();
-		currentIterator = null;
-		i1 = null;
-		i2 = null;
+		Graphics g = img.getGraphics();
+		g.setColor(Color.white);
+		g.fillRect(0, 0, xm, ym);
+		g.setColor(Color.lightGray);
+		g.fillOval(0, 0, xm, ym);
+		return (img);
 	}
 
 	

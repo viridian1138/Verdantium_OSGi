@@ -1,10 +1,4 @@
-package verdantium.core;
-
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
-
-import verdantium.ProgramDirector;
-import verdantium.PropertyChangeSource;
+package verdantium.standard;
 
 //$$strtCprt
 /*
@@ -39,7 +33,10 @@ import verdantium.PropertyChangeSource;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created CompoundFindIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 10/29/2000            | Thorn Green (viridian_1138@yahoo.com)           | Classes did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 06/24/2001            | Thorn Green (viridian_1138@yahoo.com)           | Needed a mechanism for dragging drawn shapes.                        | Took ClickRec/APPRec from GeoFrame into DrawApp.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -57,178 +54,79 @@ import verdantium.PropertyChangeSource;
 *
 */
 
+/* This is strictly a record type.  Therefore object common law does not apply. */
 
 /**
-* Returns an iterator combining two find/replace iterators.
-* 
+* A record representing a mouse click in the drawing frame that belongs to a
+* particular drawn object.
+*
 * @author Thorn Green
 */
-public class CompoundFindIterator
-	extends Object
-	implements FindReplaceIterator, PropertyChangeListener {
+public class APPRec extends ClickRec {
 	
 	/**
-	* The iterator from the current component.
-	*/
-	FindReplaceIterator currentIterator = null;
-
-	/**
-	* The first iterator to traverse through.
-	*/
-	FindReplaceIterator i1;
-
-	/**
-	* The second iterator to traverse through.
-	*/
-	FindReplaceIterator i2;
-
-	/**
-	* The property change source for the container app.
-	*/
-	PropertyChangeSource pcs = null;
-
-	/**
-	* The search parameter.
-	*/
-	Object[] parameter;
-
-	/**
-	 * Constructs the iterator.
-	 * @param param The search parameter.
-	 * @param pc The property change source for the container app.
-	 * @param it1 The first iterator to traverse through.
-	 * @param it2 The second iterator to traverse through.
+	 * Value indicating what kind of operation is to be performed by the mouse event.
 	 */
-	public CompoundFindIterator(
-		Object[] param,
-		PropertyChangeSource pc,
-		FindReplaceIterator it1,
-		FindReplaceIterator it2) {
-		parameter = param;
-		pcs = pc;
-		i1 = it1;
-		i2 = it2;
-		currentIterator = i1;
-		pcs.addPropertyChangeListener(this);
+	protected int value;
+	
+	/**
+	 * The X-Coordinate of the mouse click.
+	 */
+	protected double xcoord;
+	
+	/**
+	 * The Y-Coordinate of the mouse click.
+	 */
+	protected double ycoord;
+
+	/**
+	 * Gets the value indicating what kind of operation is to be performed by the mouse event.
+	 * @return Value indicating what kind of operation is to be performed by the mouse event.
+	 */
+	public int getValue() {
+		return (value);
 	}
 
 	/**
-	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator from the frame list.
-	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = null;
-
-		if (currentIterator == i1)
-			it = i2;
-
-		if (it == null) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
-		return (it);
+	 * Sets the value indicating what kind of operation is to be performed by the mouse event.
+	 * @param in Value indicating what kind of operation is to be performed by the mouse event.
+	 */
+	public void setValue(int in) {
+		value = in;
 	}
 
 	/**
-	* Returns whether there are any remaining elements.
-	* @return Whether there are any remaining elements.
-	*/
-	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
-		}
-
-		FindReplaceIterator next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
+	 * Gets the X-Coordinate of the mouse click.
+	 * @return The X-Coordinate of the mouse click.
+	 */
+	public double getXCoord() {
+		return (xcoord);
 	}
 
 	/**
-	* Gets the next item the iterator traverses over.
-	* @return The next item the iterator traverses over.
-	*/
-	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		currentIterator = getNextIterator();
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		return (null);
+	 * Sets the X-Coordinate of the mouse click.
+	 * @param in The X-Coordinate of the mouse click.
+	 */
+	public void setXCoord(double in) {
+		xcoord = in;
 	}
 
 	/**
-	* Removes the current item from the iterator.
-	*/
-	public void remove() {
-		replace("");
+	 * Gets the Y-Coordinate of the mouse click.
+	 * @return  The Y-Coordinate of the mouse click.
+	 */
+	public double getYCoord() {
+		return (ycoord);
 	}
 
 	/**
-	* Replaces the current item in the iterator.
-	* @param in The string with which to replace the current item.
-	*/
-	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
-		}
-	}
-
-	/**
-	* Handles property change events.
-	* @param evt The input event.
-	*/
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
-	}
-
-	/**
-	* Handles the destruction of the iterator.
-	*/
-	public void handleDestroy() {
-		currentIterator = null;
-		if ((i1 != null) && (i2 != null)) {
-			handleIteratorDestroy();
-			pcs.removePropertyChangeListener(this);
-		}
-	}
-
-	/**
-	* Destroys all currently linked iterators.
-	*/
-	protected void handleIteratorDestroy() {
-		if (i1 != null)
-			i1.handleDestroy();
-		if (i2 != null)
-			i2.handleDestroy();
-		currentIterator = null;
-		i1 = null;
-		i2 = null;
+	 * Sets the Y-Coordinate of the mouse click.
+	 * @param in  The Y-Coordinate of the mouse click.
+	 */
+	public void setYCoord(double in) {
+		ycoord = in;
 	}
 
 	
-}
+};
 

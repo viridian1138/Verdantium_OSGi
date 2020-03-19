@@ -1,6 +1,6 @@
-package verdantium.core;
+package verdantium.standard;
 
-import java.util.Iterator;
+import meta.Meta;
 
 //$$strtCprt
 /*
@@ -35,7 +35,11 @@ import java.util.Iterator;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created FindReplaceIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 10/29/2000            | Thorn Green (viridian_1138@yahoo.com)           | Classes did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 06/24/2001            | Thorn Green (viridian_1138@yahoo.com)           | Needed a mechanism for dragging drawn shapes.                        | Took ClickRec/APPRec from GeoFrame into DrawApp.
+*    | 11/17/2001            | Thorn Green (viridian_1138@yahoo.com)           | Documentation fixes.                                                 | Documentation fixes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -53,21 +57,36 @@ import java.util.Iterator;
 *
 */
 
+/* This is strictly a record type.  Therefore object common law does not apply. */
+
 /**
-* An iterator for text find/replace operations.
+* ClickRec is a helper class for {@link DrawApp} that provides a common base class
+* for describing where the mouse was clicked on a drawing object.
 * 
 * @author Thorn Green
 */
-public interface FindReplaceIterator extends Iterator<String> {
+public class ClickRec extends Meta {
 	
 	/**
-	* Handles a request to replace the currently selected string with this one.
-	* @param in The string with which to replace.
+	* Set the priority of the event (or the gravity field value)
+	* by changing the value in this field.
 	*/
-	public void replace(String in);
+	public double clickPriority = MAX_PRIORITY;
+
+	@Override
+	public void wake() {
+	};
+
+	/**
+	 * The maximum priority value for the click record.
+	 */
+	public static final double MAX_PRIORITY = 0;
 	
 	/**
-	* Handles the destruction of the iterator.
-	*/
-	public void handleDestroy();
-}
+	 * The minimum priority value for the click record.
+	 */
+	public static final double MIN_PRIORITY = 100;
+	
+};
+
+

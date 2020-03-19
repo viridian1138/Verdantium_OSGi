@@ -1,26 +1,28 @@
-package verdantium.core;
+package verdantium.standard;
 
 import java.awt.BorderLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterJob;
+import java.beans.PropertyChangeEvent;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.ScrollPaneConstants;
 
 import meta.WrapRuntimeException;
-import verdantium.Adapters;
 import verdantium.EtherEvent;
-import verdantium.EtherEventPropertySource;
-import verdantium.MessageEditor;
+import verdantium.EtherEventHandler;
 import verdantium.ProgramDirector;
-import verdantium.VerdantiumComponent;
+import verdantium.StandardEtherEvent;
 import verdantium.VerdantiumUtils;
+import verdantium.utils.IllegalInputException;
 import verdantium.utils.VerticalLayout;
 import verdantium.xapp.PropertyEditAdapter;
 
@@ -63,7 +65,6 @@ import verdantium.xapp.PropertyEditAdapter;
 *    | 09/10/2001            | Thorn Green (viridian_1138@yahoo.com)           | Second-Cut at Error Handling.                                        | Second-Cut at Error Handling.
 *    | 12/01/2001            | Thorn Green (viridian_1138@yahoo.com)           | Third-Cut at Error Handling.                                         | Third-Cut at Error Handling.
 *    | 03/01/2002            | Thorn Green (viridian_1138@yahoo.com)           | EtherEvent performance enhancements.                                 | EtherEvent performance enhancements.
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace Support.                                                | Created FindPropertyEditor using pieces from several other classes.
 *    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
@@ -83,82 +84,136 @@ import verdantium.xapp.PropertyEditAdapter;
 */
 
 /**
-* A property editor for searching a component for all instances of a particular text string.
+* A property editor that allows the size of the document page width to be changed for
+* a client scrolling version of {@link TextApp}.
 * <P>
 * @author Thorn Green
 */
-public class FindPropertyEditor extends PropertyEditAdapter {
+public class PageWidthPropertyEditor
+	extends PropertyEditAdapter
+	implements ActionListener, ItemListener {
+	
+	/**
+	* Property change event name indicating a change in the default page width.
+	*/
+	public static final String defaultPageWidthChanged =
+		"defaultPageWidthChanged";
 	
 	/**
 	* The panel in which the property editor lies.
 	*/
-	protected JPanel myPan = new JPanel();
+	private JPanel myPan = new JPanel();
+	
+	/**
+	* The TextApp being edited.
+	*/
+	private TextApp myPage = null;
+	
+	/**
+	* TextField for changing the width of the document page.
+	*/
+	private JTextField widthField = new JTextField();
+	
+	/**
+	* Label indicating the width of the printer page.
+	*/
+	private JLabel pageWidthLabel = new JLabel();
+	
+	/**
+	* Combo box for changing the measurement unit.
+	*/
+	private JComboBox<String> unitBox = new JComboBox<String>();
 
 	/**
-	* The check box for match case.
+	* Constructs the property editor for a given TextApp.
+	* @param in The TextApp being edited.
 	*/
-	protected JCheckBox matchCaseCheck = new JCheckBox("MATCH Case", false);
+	public PageWidthPropertyEditor(TextApp in) {
+		myPage = in;
+		myPan.setLayout(new BorderLayout(0, 0));
+		JButton applyButton = new JButton("Apply");
+		myPan.add(BorderLayout.SOUTH, applyButton);
 
-	/**
-	* TextField for entering the search string.
-	*/
-	protected JTextField searchStringField = new JTextField(30);
+		JPanel pan2 = new JPanel();
+		myPan.add(BorderLayout.CENTER, pan2);
+		pan2.setLayout(new VerticalLayout(1));
+		pan2.add("any", new JLabel("Measurement Unit : "));
+		pan2.add("any", unitBox);
+		pan2.add("any", new JLabel("Width : "));
+		pan2.add("any", widthField);
+		pan2.add("any", new JLabel("Default Printer Page Width : "));
+		pan2.add("any", pageWidthLabel);
 
-	/**
-	* The current find/replace iterator.
-	*/
-	protected FindReplaceIterator findIterator = null;
+		unitBox.setEditable(false);
+		unitBox.addItem("Inches");
+		unitBox.addItem("Centimeters");
+		unitBox.addItem("Points");
+		unitBox.addItem("Pixels");
+		unitBox.addItem("Picas");
+		unitBox.addItem("Millimeters");
 
-	/**
-	* The data model of the component being searched.
-	*/
-	protected EtherEventPropertySource target = null;
+		updateDefaultPageLabels();
 
-	/**
-	* The last search string used.
-	*/
-	protected String lastSrchString = "";
-
-	/**
-	* Constructs the property editor for a given property change source.
-	* @param in The data model of the component being searched.
-	*/
-	public FindPropertyEditor(EtherEventPropertySource in) {
-		target = in;
-		target.addPropertyChangeListener(this);
-		initUI();
+		in.addPropertyChangeListener(this);
+		applyButton.addActionListener(this);
+		unitBox.addItemListener(this);
 	}
 
 	/**
-	* Initializes the user interface.
+	* Given the measurement unit in the JComboBox, alters the printer page
+	* size labels to reflect the unit.
 	*/
-	protected void initUI() {
-		JPanel center = new JPanel();
-		JPanel east = new JPanel();
-		myPan.setLayout(new BorderLayout(2, 2));
-		myPan.add(BorderLayout.CENTER, center);
-		myPan.add(BorderLayout.EAST, east);
+	protected void updateDefaultPageLabels() {
+		try {
+			PrinterJob job = PrinterJob.getPrinterJob();
+			PageFormat pf1 = null;
+			if (myPage instanceof EtherEventHandler) {
+				EtherEvent s3 =
+					new StandardEtherEvent(
+						"Program Director",
+						StandardEtherEvent.getDocPageFormat,
+						null,
+						(EtherEventHandler) myPage);
+				Object r3 = ProgramDirector.fireEtherEvent(s3, null);
+				pf1 = (PageFormat) (r3);
+			}
+			if (pf1 == null) {
+				pf1 = job.defaultPage();
+			}
+			pf1 = job.validatePage(pf1);
 
-		center.setLayout(new VerticalLayout(2));
-		JPanel p1 = new JPanel();
-		center.add("any", p1);
-		center.add("any", matchCaseCheck);
-		p1.setLayout(new BorderLayout(0, 0));
-		p1.add(BorderLayout.WEST, new JLabel("Find What : "));
-		p1.add(BorderLayout.CENTER, searchStringField);
+			double wid = pf1.getImageableWidth();
+			String str = (String) (unitBox.getSelectedItem());
 
-		east.setLayout(new VerticalLayout(2));
-		JButton findNext = new JButton("Find Next");
-		JButton cancel = new JButton("Cancel");
-		east.add("any", findNext);
-		east.add("any", cancel);
+			if (str.equals("Inches")) {
+				wid = wid / 72.0;
+			}
 
-		ActionListener FndL =
-			Adapters.createGActionListener(this, "handleFind");
-		findNext.addActionListener(FndL);
-		ActionListener CanL =
-			Adapters.createGActionListener(this, "handleCancel");
-		cancel.addActionListener(CanL);
+			if (str.equals("Centimeters")) {
+				wid = wid / (72.0 / 2.54);
+			}
+
+			if (str.equals("Points")) {
+				wid = wid / 1.0;
+			}
+
+			if (str.equals("Pixels")) {
+				wid = wid / 1.0;
+			}
+
+			if (str.equals("Picas")) {
+				wid = wid / 12.0;
+			}
+
+			if (str.equals("Millimeters")) {
+				wid = wid / (72.0 / 25.4);
+			}
+
+			pageWidthLabel.setText((new Double(wid)).toString() + " " + str);
+			pageWidthLabel.repaint();
+		} catch (Throwable ex) {
+			throw (new WrapRuntimeException("Page Wid. Failed", ex));
+		}
 	}
 
 	/**
@@ -170,100 +225,84 @@ public class FindPropertyEditor extends PropertyEditAdapter {
 	}
 
 	/**
-	* Handles the destruction of the component by removing appropriate change listeners.
+	* Handles the destruction of the component bu removing appropriate property change listeners.
 	*/
 	public void handleDestroy() {
-		setFindIterator(null);
-		target.removePropertyChangeListener(this);
+		myPage.removePropertyChangeListener(this);
 	}
 
 	/**
-	* Handles a find event.
+	* Updates all necessary labels to reflect a change in the measurement unit
+	* in the property editor's combo box.
 	* @param e The input event.
 	*/
-	public void handleFind(ActionEvent e) {
-		String srch = searchStringField.getText();
-		if (!(srch.equals(lastSrchString)))
-			setFindIterator(null);
-		lastSrchString = srch;
+	public void itemStateChanged(ItemEvent e) {
+		updateDefaultPageLabels();
+	}
 
+	/**
+	* Handles property change events by updating the display of the
+	* appropriate properties.
+	* @param e The input event.
+	*/
+	public void propertyChange(PropertyChangeEvent e) {
+		if (e.getPropertyName() == defaultPageWidthChanged) {
+			updateDefaultPageLabels();
+		}
+
+	}
+
+	/**
+	* Handles a button-press event from the Apply button by changing
+	* the size of the client page size handler.
+	* @param e The input event.
+	*/
+	public void actionPerformed(ActionEvent e) {
 		try {
-			if (findIterator == null) {
-				Object[] parameter =
-					{
-						searchStringField.getText(),
-						new Boolean(matchCaseCheck.isSelected())};
-				EtherEvent send =
-					new PropertyEditEtherEvent(
-						this,
-						PropertyEditEtherEvent.createFindReplaceIterator,
-						null,
-						null);
-				send.setParameter(parameter);
+			double wid = Double.parseDouble(widthField.getText());
+			String str = (String) (unitBox.getSelectedItem());
 
-				try {
-					setFindIterator(
-						(FindReplaceIterator) (target
-							.processObjEtherEvent(send, null)));
-				} catch (Throwable ex) {
-					throw (new WrapRuntimeException("Iterator Failed", ex));
-				}
+			if (str.equals("Inches")) {
+				wid = wid * 72.0;
 			}
 
-			if (findIterator == null)
-				throw (
-					new RuntimeException("findIterator shouldn't be null here."));
-			else {
-				if (findIterator.hasNext()) {
-					Object nxt = findIterator.next();
-				} else {
-					Toolkit.getDefaultToolkit().beep();
-					VerdantiumComponent comp = (VerdantiumComponent) target;
-					JComponent jcomp = null;
-					if (comp != null)
-						jcomp = comp.getGUI();
-					MessageEditor edit =
-						new MessageEditor(
-							target,
-							"Finished Searching",
-							"Finished searching the document.",
-							ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-					ProgramDirector.showPropertyEditor(
-						edit,
-						jcomp,
-						"Finished Searching");
-					setFindIterator(null);
-				}
+			if (str.equals("Centimeters")) {
+				wid = wid * (72.0 / 2.54);
 			}
-		} catch (Exception ex) {
+
+			if (str.equals("Points")) {
+				wid = wid * 1.0;
+			}
+
+			if (str.equals("Pixels")) {
+				wid = wid * 1.0;
+			}
+
+			if (str.equals("Picas")) {
+				wid = wid * 12.0;
+			}
+
+			if (str.equals("Millimeters")) {
+				wid = wid * (72.0 / 25.4);
+			}
+
+			myPage.alterPageWidth((int) wid);
+		} catch (NumberFormatException ex) {
+			handleThrow(
+				new IllegalInputException(
+					"The page width must be a number.",
+					ex));
+		} catch (IllegalInputException ex) {
 			handleThrow(ex);
 		}
 	}
 
 	/**
-	* Handles a cancel event.
-	* @param e The input event.
-	*/
-	public void handleCancel(ActionEvent e) {
-		VerdantiumUtils.disposeContainer(this);
-	}
-
-	/**
-	* Sets the findIterator.
-	* @param in The findIterator to set.
-	*/
-	protected void setFindIterator(FindReplaceIterator in) {
-		if ((findIterator != null) && (findIterator != in))
-			findIterator.handleDestroy();
-		findIterator = in;
-	}
-
-	/**
 	* Handles the throwing of an error or exception.
-	* @param in The input error or exception.
+	* @param in The error or exception to handle.
 	*/
 	public void handleThrow(Throwable in) {
-		VerdantiumUtils.handleThrow(in, this, target);
+		VerdantiumUtils.handleThrow(in, myPage, myPage);
 	}
 
 	

@@ -1,10 +1,21 @@
-package verdantium.core;
+package verdantium.standard;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.Component;
+import java.awt.datatransfer.DataFlavor;
+import java.io.IOException;
 
+import javax.swing.JPanel;
+
+import meta.DataFormatException;
+import meta.VersionBuffer;
+import meta.WrapRuntimeException;
 import verdantium.ProgramDirector;
-import verdantium.PropertyChangeSource;
+import verdantium.TransVersionBuffer;
+import verdantium.VerdantiumComponent;
+import verdantium.utils.ComponentNotFoundException;
+import verdantium.utils.IOComponentNotFoundException;
+import verdantium.utils.IOResourceNotFoundException;
+import verdantium.utils.ResourceNotFoundException;
 
 //$$strtCprt
 /*
@@ -39,7 +50,11 @@ import verdantium.PropertyChangeSource;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created CompoundFindIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 06/24/2001            | Thorn Green (viridian_1138@yahoo.com)           | Insert panel did not have desired UI characteristics.                | Among other things, made the UI transparent.
+*    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
+*    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -57,178 +72,83 @@ import verdantium.PropertyChangeSource;
 *
 */
 
-
 /**
-* Returns an iterator combining two find/replace iterators.
-* 
+* Panel used to enclose Verdantium components that are inserted directly into
+* the text of the {@link TextApp}.
+* <P>
 * @author Thorn Green
 */
-public class CompoundFindIterator
-	extends Object
-	implements FindReplaceIterator, PropertyChangeListener {
+public class TextAppInsertPanel extends JPanel {
 	
 	/**
-	* The iterator from the current component.
+	* Constructs the panel.
 	*/
-	FindReplaceIterator currentIterator = null;
-
-	/**
-	* The first iterator to traverse through.
-	*/
-	FindReplaceIterator i1;
-
-	/**
-	* The second iterator to traverse through.
-	*/
-	FindReplaceIterator i2;
-
-	/**
-	* The property change source for the container app.
-	*/
-	PropertyChangeSource pcs = null;
-
-	/**
-	* The search parameter.
-	*/
-	Object[] parameter;
-
-	/**
-	 * Constructs the iterator.
-	 * @param param The search parameter.
-	 * @param pc The property change source for the container app.
-	 * @param it1 The first iterator to traverse through.
-	 * @param it2 The second iterator to traverse through.
-	 */
-	public CompoundFindIterator(
-		Object[] param,
-		PropertyChangeSource pc,
-		FindReplaceIterator it1,
-		FindReplaceIterator it2) {
-		parameter = param;
-		pcs = pc;
-		i1 = it1;
-		i2 = it2;
-		currentIterator = i1;
-		pcs.addPropertyChangeListener(this);
+	public TextAppInsertPanel() {
+		setOpaque(false);
 	}
 
 	/**
-	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator from the frame list.
+	* Reads the embedded component from persistent storage.
+	* @param sta The version buffer from which to read the perssistent data.
 	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = null;
-
-		if (currentIterator == i1)
-			it = i2;
-
-		if (it == null) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
+	public void readData(TransVersionBuffer sta)
+		throws IOException, ClassNotFoundException {
+		try {
+			DataFlavor[] myFlavors = { null };
+			Class<? extends VerdantiumComponent> myClass = ProgramDirector.getComponentClass(sta, myFlavors);
+			String myName = ProgramDirector.getComponentName();
+			VerdantiumComponent myPart = myClass.newInstance();
+			VersionBuffer.chkNul(myPart);
+			comp = myPart;
+			ProgramDirector.showComponent(myPart, this, null);
+			DataFlavor flavor = myFlavors[0];
+			myPart.loadPersistentData(flavor, sta);
+		} catch (ClassNotFoundException ex) {
+			throw (ex);
+		} catch (ResourceNotFoundException ex) {
+			throw (new IOResourceNotFoundException(ex));
+		} catch (ComponentNotFoundException ex) {
+			throw (new IOComponentNotFoundException(ex));
+		} catch (IOException ex) {
+			throw (ex);
+		} catch (InstantiationException ex) {
+			throw (new WrapRuntimeException("Creation Failed", ex));
+		} catch (IllegalAccessException ex) {
+			throw (new WrapRuntimeException("Creation Failed", ex));
+		} catch (ClassCastException ex) {
+			throw (new DataFormatException(ex));
 		}
-
-		return (it);
 	}
 
-	/**
-	* Returns whether there are any remaining elements.
-	* @return Whether there are any remaining elements.
-	*/
-	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
-		}
-
-		FindReplaceIterator next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
-	}
-
-	/**
-	* Gets the next item the iterator traverses over.
-	* @return The next item the iterator traverses over.
-	*/
-	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		currentIterator = getNextIterator();
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
-		}
-
-		return (null);
-	}
-
-	/**
-	* Removes the current item from the iterator.
-	*/
-	public void remove() {
-		replace("");
-	}
-
-	/**
-	* Replaces the current item in the iterator.
-	* @param in The string with which to replace the current item.
-	*/
-	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
+	@Override
+	public Component getComponent(int in) {
+		if ((in == 0) && (comp != null)) {
+			return (comp.getGUI());
+		} else {
+			return (super.getComponent(in));
 		}
 	}
 
 	/**
-	* Handles property change events.
-	* @param evt The input event.
+	* Gets the embedded Verdantium component.
+	* @return The embedded Verdantium component.
 	*/
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
-		}
-
+	public VerdantiumComponent getComponent() {
+		return (comp);
 	}
 
 	/**
-	* Handles the destruction of the iterator.
+	* Sets the embedded Verdantium component.
+	* @param in The embedded Verdantium component.
 	*/
-	public void handleDestroy() {
-		currentIterator = null;
-		if ((i1 != null) && (i2 != null)) {
-			handleIteratorDestroy();
-			pcs.removePropertyChangeListener(this);
-		}
+	public void setComponent(VerdantiumComponent in) {
+		comp = in;
 	}
 
 	/**
-	* Destroys all currently linked iterators.
+	* The embedded Verdantium component.
 	*/
-	protected void handleIteratorDestroy() {
-		if (i1 != null)
-			i1.handleDestroy();
-		if (i2 != null)
-			i2.handleDestroy();
-		currentIterator = null;
-		i1 = null;
-		i2 = null;
-	}
-
+	VerdantiumComponent comp = null;
 	
 }
 

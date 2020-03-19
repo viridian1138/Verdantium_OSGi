@@ -213,7 +213,7 @@ public class ContainerFindIterator
 	* Gets the next item the iterator traverses over.
 	* @return The next item the iterator traverses over.
 	*/
-	public Object next() {
+	public String next() {
 		if (currentIterator != null) {
 			if (currentIterator.hasNext())
 				return (currentIterator.next());

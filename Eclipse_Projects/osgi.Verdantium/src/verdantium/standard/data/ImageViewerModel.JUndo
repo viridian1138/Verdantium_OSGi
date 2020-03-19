@@ -1,0 +1,85 @@
+
+
+package verdantium.standard.data;
+
+/*$$strtCprt*/
+/*
+     Verdantium compound-document framework by Thorn Green
+	Copyright (C) 2005 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+public class ImageViewerModel
+{
+    protected int displayMode;
+	protected int imageMode;
+	protected jobj image;
+	protected jobj imageBytes;
+
+    public int getDisplayMode( )
+    	{ displayMode };
+    	
+    public milieu setDisplayMode( int in )
+    	{ displayMode := in };
+    	
+    public int getImageMode( )
+    	{ imageMode };
+    	
+    public milieu setImageMode( int in )
+    	{ imageMode := in };
+    	
+    public jobj getImage( )
+    	{ image };
+    	
+    public milieu setImage( jobj in )
+    	{ image := in };
+    	
+    public jobj getImageBytes( )
+    	{ imageBytes };
+    	
+    public milieu setImageBytes( jobj in )
+    	{ imageBytes := in };
+    	
+    public milieu setImageData( int _imageMode , jobj _image , jobj _imageBytes )
+    {
+    	seq now into
+		{
+			imageMode := _imageMode;
+			image := _image;
+			imageBytes := _imageBytes;
+		}
+		with now fi
+    };
+		
+	public static pair[ ImageViewerModel ] new_ImageViewerModel( 
+		int _displayMode ,
+    	int _imageMode ,
+	    jobj _image ,
+	    jobj _imageBytes )
+	{
+		seq now into
+		{
+			pair[ ImageViewerModel ] gpair = ImageViewerModel.allocate_ImageViewerModel();
+			ImageViewerModel model = gpair.cobj;
+			model.setDisplayMode( _displayMode );
+			model.setImageData( _imageMode , _image , _imageBytes );
+		}
+		with [ model , now ] fi
+	};
+	
+}
+

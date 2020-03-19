@@ -1,10 +1,14 @@
-package verdantium.core;
+package verdantium.standard.help;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.net.URL;
+
+import javax.swing.JComponent;
 
 import verdantium.ProgramDirector;
-import verdantium.PropertyChangeSource;
+import verdantium.VerdantiumComponent;
+import verdantium.core.DefaultPropertyEditor;
+import verdantium.standard.BeanBridge;
+import verdantium.vhelp.WrappingScrollingVerdantiumHelp;
 
 //$$strtCprt
 /*
@@ -39,7 +43,8 @@ import verdantium.PropertyChangeSource;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 04/21/2002            | Thorn Green (viridian_1138@yahoo.com)           | Find/Replace support.                                                | Created CompoundFindIterator.
+*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -57,178 +62,103 @@ import verdantium.PropertyChangeSource;
 *
 */
 
-
 /**
-* Returns an iterator combining two find/replace iterators.
-* 
-* @author Thorn Green
-*/
-public class CompoundFindIterator
-	extends Object
-	implements FindReplaceIterator, PropertyChangeListener {
+ * Online help class for bean bridge.
+ * 
+ * @author tgreen
+ *
+ */
+public class BeanBridgeHelp extends WrappingScrollingVerdantiumHelp {
+	
+	private BeanBridge MyCell = new BeanBridge();
+	
+	private DefaultPropertyEditor MyEdit0_0 = null;
+	
+	private DefaultPropertyEditor MyEdit0_1 = null;
+	
+	private DefaultPropertyEditor MyEdit0_2 = null;
+	
+	private DefaultPropertyEditor MyEdit1 = null;
+	
+	private DefaultPropertyEditor MyEdit2 = null;
+	
+	private DefaultPropertyEditor MyEdit3 = null;
+
 	
 	/**
-	* The iterator from the current component.
-	*/
-	FindReplaceIterator currentIterator = null;
-
-	/**
-	* The first iterator to traverse through.
-	*/
-	FindReplaceIterator i1;
-
-	/**
-	* The second iterator to traverse through.
-	*/
-	FindReplaceIterator i2;
-
-	/**
-	* The property change source for the container app.
-	*/
-	PropertyChangeSource pcs = null;
-
-	/**
-	* The search parameter.
-	*/
-	Object[] parameter;
-
-	/**
-	 * Constructs the iterator.
-	 * @param param The search parameter.
-	 * @param pc The property change source for the container app.
-	 * @param it1 The first iterator to traverse through.
-	 * @param it2 The second iterator to traverse through.
-	 */
-	public CompoundFindIterator(
-		Object[] param,
-		PropertyChangeSource pc,
-		FindReplaceIterator it1,
-		FindReplaceIterator it2) {
-		parameter = param;
-		pcs = pc;
-		i1 = it1;
-		i2 = it2;
-		currentIterator = i1;
-		pcs.addPropertyChangeListener(this);
+     * Constructs the help page.
+     * @param in The URL of the help content page.
+     */
+	public BeanBridgeHelp(URL in) {
+		super(in);
+		MyEdit0_0 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit0_1 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit0_2 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit1 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit2 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit3 = (DefaultPropertyEditor) (MyCell.makePropertiesEditor());
+		MyEdit0_0.setSelectedIndex(0);
+		MyEdit0_1.setSelectedIndex(0);
+		MyEdit0_2.setSelectedIndex(0);
+		MyEdit1.setSelectedIndex(1);
+		MyEdit2.setSelectedIndex(2);
+		MyEdit3.setSelectedIndex(3);
+		MyEdit0_0.getProgramDirectorEditor().setSelectedIndex(0);
+		MyEdit0_1.getProgramDirectorEditor().setSelectedIndex(1);
+		MyEdit0_2.getProgramDirectorEditor().setSelectedIndex(2);
 	}
 
-	/**
-	* Gets the next iterator from the frame list, and handles house-cleaning chores.
-	* @return The next iterator from the frame list.
-	*/
-	protected FindReplaceIterator getNextIterator() {
-		FindReplaceIterator it = null;
+	 /**
+     * Displays the help page.
+     * @param in The component in which to display the help page.
+     */
+	public static void run(VerdantiumComponent in) {
+		URL u = BeanBridgeHelp.class.getResource("BeanBridgeHelpPage.rtf");
+		JComponent frm = null;
+		if (in != null)
+			frm = in.getGUI();
+		BeanBridgeHelp hlp = new BeanBridgeHelp(u);
+		ProgramDirector.showPropertyEditor(hlp, frm, "Bean Bridge Help");
+		hlp.parseElements();
+	}
 
-		if (currentIterator == i1)
-			it = i2;
-
-		if (it == null) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
+	@Override
+	protected void dispatchAction(String txt) {
+		if (txt.equals("comp")) {
+			BeanBridge MyC = MyCell;
+			insertComponent(MyC);
 		}
 
-		return (it);
-	}
-
-	/**
-	* Returns whether there are any remaining elements.
-	* @return Whether there are any remaining elements.
-	*/
-	public boolean hasNext() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (true);
+		if (txt.equals("edit0_0")) {
+			VerdantiumComponent MyC = MyEdit0_0;
+			insertComponent(MyC);
 		}
 
-		FindReplaceIterator next_it = getNextIterator();
-		if (next_it != null)
-			return (next_it.hasNext());
-
-		return (false);
-	}
-
-	/**
-	* Gets the next item the iterator traverses over.
-	* @return The next item the iterator traverses over.
-	*/
-	public String next() {
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
+		if (txt.equals("edit0_1")) {
+			VerdantiumComponent MyC = MyEdit0_1;
+			insertComponent(MyC);
 		}
 
-		currentIterator = getNextIterator();
-		if (currentIterator != null) {
-			if (currentIterator.hasNext())
-				return (currentIterator.next());
+		if (txt.equals("edit0_2")) {
+			VerdantiumComponent MyC = MyEdit0_2;
+			insertComponent(MyC);
 		}
 
-		return (null);
-	}
-
-	/**
-	* Removes the current item from the iterator.
-	*/
-	public void remove() {
-		replace("");
-	}
-
-	/**
-	* Replaces the current item in the iterator.
-	* @param in The string with which to replace the current item.
-	*/
-	public void replace(String in) {
-		if (currentIterator != null)
-			currentIterator.replace(in);
-		else {
-			FindReplaceIterator it = getNextIterator();
-			if (it != null)
-				it.replace(in);
+		if (txt.equals("edit1")) {
+			VerdantiumComponent MyC = MyEdit1;
+			insertComponent(MyC);
 		}
-	}
 
-	/**
-	* Handles property change events.
-	* @param evt The input event.
-	*/
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (evt.getPropertyName() == ProgramDirector.propertyDestruction) {
-			currentIterator = null;
-			if ((i1 != null) && (i2 != null)) {
-				handleIteratorDestroy();
-				pcs.removePropertyChangeListener(this);
-			}
+		if (txt.equals("edit2")) {
+			VerdantiumComponent MyC = MyEdit2;
+			insertComponent(MyC);
+		}
+
+		if (txt.equals("edit3")) {
+			VerdantiumComponent MyC = MyEdit3;
+			insertComponent(MyC);
 		}
 
 	}
 
-	/**
-	* Handles the destruction of the iterator.
-	*/
-	public void handleDestroy() {
-		currentIterator = null;
-		if ((i1 != null) && (i2 != null)) {
-			handleIteratorDestroy();
-			pcs.removePropertyChangeListener(this);
-		}
-	}
-
-	/**
-	* Destroys all currently linked iterators.
-	*/
-	protected void handleIteratorDestroy() {
-		if (i1 != null)
-			i1.handleDestroy();
-		if (i2 != null)
-			i2.handleDestroy();
-		currentIterator = null;
-		i1 = null;
-		i2 = null;
-	}
-
-	
 }
-

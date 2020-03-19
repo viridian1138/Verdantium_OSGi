@@ -1,0 +1,147 @@
+
+
+package verdantium.standard;
+
+/*$$strtCprt*/
+/*
+    Drawing application by Thorn Green
+	Copyright (C) 2007 Thorn Green
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+/*$$endCprt*/
+
+
+import umeta.*;
+
+
+public abstract class DrawingRectangularObjectBase extends DrawingObject
+{
+
+	/**
+	* The rendering mode of the object.  This mode can take on the values of either {@link DrawApp#LineMode},
+	* {@link DrawApp#RectMode}, {@link DrawApp#FilledRectMode}, {@link DrawApp#RoundRectMode},
+	* {@link DrawApp#FilledRoundRectMode}, {@link DrawApp#OvalMode}, or {@link DrawApp#FilledOvalMode}.
+	*/
+	private int renderingMode;
+	
+	public int getRenderingMode()
+	    { renderingMode };
+	    
+	public milieu setRenderingMode( int in )
+	    { renderingMode := in };
+
+	/**
+	* The line color of the rendered object.
+	*/
+	private jobj lineColor;
+	
+	public jobj getLineColor()
+	    { lineColor };
+	    
+	public milieu setLineColor( jobj in )
+	    { lineColor := in };
+
+	/**
+	* The fill color of the rendered object.
+	*/
+	private jobj fillColor;
+	
+	public jobj getFillColor()
+	    { fillColor };
+	    
+	public milieu setFillColor( jobj in )
+	    { fillColor := in };
+
+	/**
+	* The rectangle that describes where the object is to be rendered.
+	*/
+	private jobj myRect;
+	
+	public jobj getMyRect()
+	    { myRect };
+	    
+	public milieu setMyRect( jobj in )
+	    { myRect := in };
+
+	/**
+	* The width of the stroke used to render the object.  Holds -1 if the stroke
+	* has not created by the {@link #setBasicStroke} method.
+	*/
+	private double basicStrokeWidth;
+	
+	public double getBasicStrokeWidth()
+	    { basicStrokeWidth };
+	    
+	public milieu setBasicStrokeWidth( double in )
+	    { basicStrokeWidth := in };
+
+	/**
+	* The stroke used to render the object.
+	*/
+	private jobj myStroke;
+	
+	public jobj getMyStroke()
+	    { myStroke };
+	    
+	public milieu setMyStroke( jobj in )
+	    { myStroke := in };
+
+	/**
+	* Ellipse that is rendered if the class is in an ellipse mode.
+	*/
+	private jobj myEll;
+	
+	public jobj getMyEll()
+	    { myEll };
+	    
+	public milieu setMyEll( jobj in )
+	    { myEll := in };
+
+	/**
+	* Round rectangle that is rendered if the class is in a round rectangle mode.
+	*/
+	private jobj myRound;
+	
+	public jobj getMyRound()
+	    { myRound };
+	    
+	public milieu setMyRound( jobj in )
+	    { myRound := in };
+
+	/**
+	* Rectangle that is rendered if the class is in a rectangle mode.
+	*/
+	private jobj myRct;
+	
+	public jobj getMyRct()
+	    { myRct };
+	    
+	public milieu setMyRct( jobj in )
+	    { myRct := in };
+
+	/**
+	* Line that is rendered if the class is in LineMode.
+	*/
+	private jobj myLine;
+	
+	public jobj getMyLine()
+	    { myLine };
+	    
+	public milieu setMyLine( jobj in )
+	    { myLine := in };
+	        
+}
+

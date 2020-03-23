@@ -1,0 +1,54 @@
+{\rtf1\mac\ansicpg10000\cocoartf102
+{\fonttbl\f0\froman\fcharset77 TimesNewRomanMS;}
+{\colortbl;\red255\green255\blue255;}
+\vieww12020\viewh12960\viewkind0
+\deftab720
+\pard\pardeftab720\ql\qnatural
+
+\f0\fs20 \cf0 \
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs56 \cf0 Program Director and \
+	Program Director property editor\
+
+\fs28 \
+The Program Director is a basic component for running other components.  The Program Director displays a single button on the screen as illustrated below:\
+\
+\{%comp%\}\
+\
+\
+Clicking this button causes the Program Director  property editor to be displayed as shown below.  Other components also make extensive use of this property editor.\
+\
+\{%edit0%\}\
+\
+\
+The property editor has three tabs along the top.  The "New" tab allows new instances of a component to be displayed.  Under the new tab is a list of component types followed by the buttons "Apply" and "Help".  Selecting an item from the list, and pressing "Help" will show the help page for that component (if help exists for that particular application).  If no item is selected, or if "Program Director" is selected, clicking help will display this help page.  The "Apply" button creates new instances of a component.  To create a new component, select the desired component type from the list and click the "Apply" button.\
+\
+The "Open File" tab of the property editor provides options as shown below:\
+\
+\{%edit1%\}\
+\
+\
+The "Open File" tab allows the user to open files saved on her file system.  There are two ways to use this tab.  The first is to put the full path of the desired file into the text field at the top of the pane, and click the "Apply" button.  The second way to use the tab is to click the "Choose File" button.  This will bring up a dialog that allows the user to browse the file tree, and select the desired file visually.  The "Use File Watcher" check box controls whether the file should be loaded using the FileWatcher component.  FileWatcher is a component that stores a reference to the URL of whatever it loads.  This becomes important in the context of embedding because saving a embedded component without a file watcher will save the component's data, while saving a FileWatcher with an embedded component will save the URL reference.  Hence, a FileWatcher will re-load subsequent changes to the original file by reference.  For most naive users, the default setting of the check box will be the proper one.\
+\
+The "Open URL" tab's controls are shown below:\
+\
+\
+\{%edit2%\}\
+\
+\
+This tab allows files to be loaded from any URL on the network.  To use it, enter the desired URL in the textfield at the top of the pane, and click the "Apply" button.  The "Use File Watcher" check box works the same as the one under the "Open File" tab.\
+\
+\
+\pard\pardeftab720\ql\qnatural
+
+\fs40 \cf0 1.0 Execution Options
+\fs28 \
+\
+The component can be launched from ProgramDirector, or it can be run as a standalone application (e.g. using "java verdantium.ProgramDirector").  A number of command-line options are available for standalone execution.  Note that some of these options may not work unless the component is registered in the "apps.cfg" file in the Verdantium distribution.  A summary of some of the options is given here.  Entering the path to a file (either a local path or a URL) on the command line will cause the component, on startup, to attempt to load the file.  If the file contains embedded components, then the initial standalone load from command line will only work for embedded components that are locally defined in the "apps.cfg" file.  If "-help" is specified on the command line for standalone execution (and the component is defined in "apps.cfg") then this help page will be displayed.  If "-x" is specified followed by a URL (or pathname) then ProgramDirector will attempt to determine which component should open the file, and load the file into that component.  This will only work with components that are registered in the "apps.cfg" file.\
+\
+It should also be possible to run the component as an Applet using VerdantiumApplet with the Java Plug-In, or to run the component as a Java Bean using the BeanBridge component.  However, the supporting files for doing this are not delivered with typical Verdantium distributions (one would need to bundle one HTML file for each component to be run as an Applet and test them on multiple platforms through multiple browsers, and this isn't currently a priority; there are similar issues for supporting bean compatibility across multiple versions of the Sun BeanBox).  OLE compatibility is possible in theory.  Sun has distributed a bridge that allows Java Beans to display in an OLE container.  The OLE container could load the BeanBridge bean, which could then load any Verdantium component.  This has worked once (Microsoft Word embedded an early version of GeoFrame), but has not been subsequently tested since 1998.  Current Verdantium distributions are not delivered with the jar manifest files that are needed to make this work.  OpenDoc compatibility is no longer possible because the Cyberdog browser does not support JDK 1.4 APIs.\
+\
+\
+}

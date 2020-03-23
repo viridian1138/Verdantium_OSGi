@@ -144,16 +144,16 @@ public class WrappingScrollingVerdantiumHelp
 			new JScrollPaneAlt(
 				ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,
 				ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		JPanel Panel2 = new WrappingScrollingVerdantiumHelpPanel(MyEdit, this);
+		JPanel Panel2 = new WrappingScrollingVerdantiumHelpPanel(myEdit, this);
 		SizingPanel = Panel2;
-		MyPan.setLayout(new BorderLayout(0, 0));
+		myPan.setLayout(new BorderLayout(0, 0));
 		Panel2.setLayout(new BorderLayout(0, 0));
-		MyPan.add("Center", scp);
+		myPan.add("Center", scp);
 		JViewport scv = (JViewport) (scp.getViewport());
 		scv.add(Panel2);
-		Panel2.add("Center", MyDesk);
-		MyPan.setMinimumSize(new Dimension(2, 2));
-		MyPan.setPreferredSize(new Dimension(200, 200));
+		Panel2.add("Center", myDesk);
+		myPan.setMinimumSize(new Dimension(2, 2));
+		myPan.setPreferredSize(new Dimension(200, 200));
 		scp.setBackground(Color.white);
 	}
 
@@ -218,7 +218,7 @@ public class WrappingScrollingVerdantiumHelp
 		Book bk = new Book();
 
 		ScrollingVerdantiumHelpPrintable st =
-			new ScrollingVerdantiumHelpPrintable(MyDesk, MyEdit, pf1);
+			new ScrollingVerdantiumHelpPrintable(myDesk, myEdit, pf1);
 		int numPages = st.getNumPages();
 
 		bk.append(st, pf1, numPages);
@@ -242,7 +242,7 @@ public class WrappingScrollingVerdantiumHelp
 		Book bk = new Book();
 
 		ScrollingVerdantiumHelpPrintable st =
-			new ScrollingVerdantiumHelpPrintable(MyDesk, MyEdit, pf1);
+			new ScrollingVerdantiumHelpPrintable(myDesk, myEdit, pf1);
 		int numPages = st.getNumPages();
 
 		bk.append(st, pf1, numPages);

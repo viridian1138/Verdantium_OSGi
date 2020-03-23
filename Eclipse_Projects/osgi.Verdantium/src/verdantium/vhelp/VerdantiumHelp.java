@@ -128,32 +128,32 @@ public class VerdantiumHelp
 	/**
 	* The desktop pane of the component.
 	*/
-	protected VerdantiumHelpDesktopPane MyDesk = null;
+	protected VerdantiumHelpDesktopPane myDesk = null;
 	
 	/**
 	* The text editing pane of the component.
 	*/
-	protected JEditorPane MyEdit = new JEditorPane();
+	protected JEditorPane myEdit = new JEditorPane();
 	
 	/**
 	* The panel containing the GUI for the component.
 	*/
-	protected JPanel MyPan = new JPanel();
+	protected JPanel myPan = new JPanel();
 
 	/**
 	* The name of the border class.
 	*/
-	protected String BorderClass = null;
+	protected String borderClass = null;
 	
 	/**
 	* The parameter types of the constructor for the border.
 	*/
-	protected Class<?>[] BorderTypes = null;
+	protected Class<?>[] borderTypes = null;
 	
 	/**
 	* The parameters of the constructor for the border.
 	*/
-	protected Object[] BorderParam = null;
+	protected Object[] borderParam = null;
 
 	/**
 	 * Undo manager for help.
@@ -221,56 +221,56 @@ public class VerdantiumHelp
 	/**
 	* The font size of the text.
 	*/
-	private int FontSize = 12;
+	private int fontSize = 12;
 	
 	/**
 	* The font name of the text.
 	*/
-	private String FontName = "DialogInput";
+	private String fontName = "DialogInput";
 	
 	/**
 	* Foreground color of the text.
 	*/
-	private Color FgColor = Color.black;
+	private Color fgColor = Color.black;
 	
 	/**
 	* Background color of the text.
 	*/
-	private Color BkColor = Color.white;
+	private Color bkColor = Color.white;
 
 	/**
 	* Gets the foreground color of the text.
 	* @return The foreground color of the text.
 	*/
 	public Color getFgColor() {
-		return (FgColor);
+		return (fgColor);
 	}
 	/**
 	* Gets the background color of the text.
 	* @return The background color of the text.
 	*/
 	public Color getBkColor() {
-		return (BkColor);
+		return (bkColor);
 	}
 
 	/**
 	* Sets the foreground and background colors of the text.
-	* @param Fg The foreground color of the text.
-	* @param Bk The background color of the text.
+	* @param fg The foreground color of the text.
+	* @param bk The background color of the text.
 	*/
-	protected void setColors(Color Fg, Color Bk) {
-		FgColor = Fg;
-		BkColor = Bk;
+	protected void setColors(Color fg, Color bk) {
+		fgColor = fg;
+		bkColor = bk;
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, "go");
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, "go");
 		(
 			new StyledEditorKit.ForegroundAction(
 				"foreground",
-				FgColor)).actionPerformed(
+				fgColor)).actionPerformed(
 			e);
 		/* myEdit.setForeground( Fg ); */
-		MyEdit.repaint();
-		PropL.firePropertyChange(VerdantiumHelpColors, null, null);
+		myEdit.repaint();
+		propL.firePropertyChange(VerdantiumHelpColors, null, null);
 	}
 
 	/**
@@ -278,7 +278,7 @@ public class VerdantiumHelp
 	* @return The font size of the text.
 	*/
 	public int getFontSize() {
-		return (FontSize);
+		return (fontSize);
 	}
 
 	/**
@@ -286,13 +286,13 @@ public class VerdantiumHelp
 	* @param in The font size of the text.
 	*/
 	protected void setFontSize(int in) {
-		int tmp = FontSize;
-		FontSize = in;
+		int tmp = fontSize;
+		fontSize = in;
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, "go");
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, "go");
 		(new StyledEditorKit.FontSizeAction("font-size", in)).actionPerformed(
 			e);
-		PropL.firePropertyChange(
+		propL.firePropertyChange(
 			VerdantiumHelpFontSize,
 			new Integer(tmp),
 			new Integer(in));
@@ -303,7 +303,7 @@ public class VerdantiumHelp
 	* @return The font name of the text.
 	*/
 	public String getFontName() {
-		return (FontName);
+		return (fontName);
 	}
 
 	/**
@@ -311,15 +311,15 @@ public class VerdantiumHelp
 	* @param in The font name of the text.
 	*/
 	protected void setFontName(String in) {
-		FontName = in;
+		fontName = in;
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, in);
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, in);
 		(
 			new StyledEditorKit.FontFamilyAction(
 				"font-family",
 				in)).actionPerformed(
 			e);
-		PropL.firePropertyChange(VerdantiumHelpFont, null, null);
+		propL.firePropertyChange(VerdantiumHelpFont, null, null);
 	}
 
 	/**
@@ -327,7 +327,7 @@ public class VerdantiumHelp
 	*/
 	protected void toggleBoldAction() {
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, "go");
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, "go");
 		(new StyledEditorKit.BoldAction()).actionPerformed(e);
 	}
 	
@@ -336,7 +336,7 @@ public class VerdantiumHelp
 	*/
 	protected void toggleItalicAction() {
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, "go");
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, "go");
 		(new StyledEditorKit.ItalicAction()).actionPerformed(e);
 	}
 
@@ -345,7 +345,7 @@ public class VerdantiumHelp
 	*/
 	protected void toggleUnderlineAction() {
 		ActionEvent e =
-			new ActionEvent(MyEdit, ActionEvent.ACTION_PERFORMED, "go");
+			new ActionEvent(myEdit, ActionEvent.ACTION_PERFORMED, "go");
 		(new StyledEditorKit.UnderlineAction()).actionPerformed(e);
 	}
 
@@ -354,7 +354,7 @@ public class VerdantiumHelp
 	* @return The GUI for the component.
 	*/
 	public JComponent getGUI() {
-		return (MyPan);
+		return (myPan);
 	}
 
 	/**
@@ -365,8 +365,8 @@ public class VerdantiumHelp
 		try {
 			if (evt.getPropertyName() == EditorControl.EditCntlChange) {
 				int count;
-				JInternalFrame[] AllFrames = MyDesk.getAllFrames();
-				MyEdit.setEditable(
+				JInternalFrame[] AllFrames = myDesk.getAllFrames();
+				myEdit.setEditable(
 					(DesignerControl.isDesignTime())
 						|| (!isOnlyDesignerEdits()));
 
@@ -402,8 +402,8 @@ public class VerdantiumHelp
 	*/
 	public void handleDestroy() {
 		EditorControl.removePropertyChangeListener(this);
-		PropL.firePropertyChange(ProgramDirector.propertyHide, null, null);
-		PropL.firePropertyChange(
+		propL.firePropertyChange(ProgramDirector.propertyHide, null, null);
+		propL.firePropertyChange(
 			ProgramDirector.propertyDestruction,
 			null,
 			null);
@@ -415,32 +415,32 @@ public class VerdantiumHelp
 	* @param in The location of the help page text to be displayed.
 	*/
 	public VerdantiumHelp(URL in) {
-		PropL = new PropertyChangeSupport(this);
+		propL = new PropertyChangeSupport(this);
 		onlyDesignerEdits =
 			new OnlyDesignerEdits(
 				UndoManager.createInstanceUndoManager(
 					jundo.runtime.Runtime.getInitialMilieu()));
 		RTFEditorKit MyKit = new RTFEditorKit();
-		MyEdit.setEditorKit(MyKit);
-		MyDesk =
+		myEdit.setEditorKit(MyKit);
+		myDesk =
 			new VerdantiumHelpDesktopPane(
 				UndoManager.createInstanceUndoManager(
 					jundo.runtime.Runtime.getInitialMilieu()),
 				this,
-				MyEdit);
+				myEdit);
 		arrangeLayout();
 
 		try {
-			MyKit.read(in.openStream(), MyEdit.getDocument(), 0);
+			MyKit.read(in.openStream(), myEdit.getDocument(), 0);
 		} catch (Exception e) {
 			throw (new WrapRuntimeException("Help Failed", e));
 		}
 
-		MyEdit.addMouseListener(this);
-		MyEdit.setEditable(true);
+		myEdit.addMouseListener(this);
+		myEdit.setEditable(true);
 		EditorControl.addPropertyChangeListener(this);
-		MyEdit.setOpaque(true);
-		onlyDesignerEdits.configureForEtherEvents(this, PropL);
+		myEdit.setOpaque(true);
+		onlyDesignerEdits.configureForEtherEvents(this, propL);
 	}
 
 	/**
@@ -448,8 +448,8 @@ public class VerdantiumHelp
 	 * and applies the embedding.
 	 */
 	protected void parseElements() {
-		Vector strt_pos = new Vector();
-		Vector end_pos = new Vector();
+		Vector<Position> strt_pos = new Vector<Position>();
+		Vector<Position> end_pos = new Vector<Position>();
 
 		parseElements(strt_pos, end_pos);
 
@@ -461,10 +461,10 @@ public class VerdantiumHelp
 	 * @param strt_pos The output start positions of the recognized tags.
 	 * @param end_pos The output end positions of the recognized tags.
 	 */
-	protected void parseElements(Vector strt_pos, Vector end_pos) {
+	protected void parseElements(Vector<Position> strt_pos, Vector<Position> end_pos) {
 		String Txt = null;
 		try {
-			Txt = MyEdit.getText(0, MyEdit.getDocument().getLength() - 1);
+			Txt = myEdit.getText(0, myEdit.getDocument().getLength() - 1);
 		} catch (Exception e) {
 			throw (new WrapRuntimeException("Help Failed", e));
 		}
@@ -475,8 +475,8 @@ public class VerdantiumHelp
 			if ((Txt.charAt(count) == '{') && (Txt.charAt(count + 1) == '%')) {
 				try {
 					int endp = getParseEnd(Txt, count);
-					Position st = MyEdit.getDocument().createPosition(count);
-					Position ed = MyEdit.getDocument().createPosition(endp);
+					Position st = myEdit.getDocument().createPosition(count);
+					Position ed = myEdit.getDocument().createPosition(endp);
 					strt_pos.setSize(strt_pos.size() + 1);
 					end_pos.setSize(end_pos.size() + 1);
 					strt_pos.setElementAt(st, strt_pos.size() - 1);
@@ -493,32 +493,32 @@ public class VerdantiumHelp
 	 * @param strt_pos The input start positions of the recognized tags.
 	 * @param end_pos The input end positions of the recognized tags.
 	 */
-	public void handleParse(Vector strt_pos, Vector end_pos) {
+	public void handleParse(Vector<Position> strt_pos, Vector<Position> end_pos) {
 		int count;
 
 		for (count = 0; count < strt_pos.size(); count++) {
-			int strt = ((Position) (strt_pos.elementAt(count))).getOffset();
-			int end = ((Position) (end_pos.elementAt(count))).getOffset();
+			int strt = strt_pos.elementAt(count).getOffset();
+			int end = end_pos.elementAt(count).getOffset();
 			strt_pos.setElementAt(null, count);
 			end_pos.setElementAt(null, count);
 			if (end > strt) {
 				try {
 					String ParseStr =
-						MyEdit.getText(strt + 2, (end - 1) - (strt + 2));
-					MyEdit.select(strt, end + 1);
-					MyEdit.replaceSelection("");
-					MyEdit.setCaretPosition(strt);
+						myEdit.getText(strt + 2, (end - 1) - (strt + 2));
+					myEdit.select(strt, end + 1);
+					myEdit.replaceSelection("");
+					myEdit.setCaretPosition(strt);
 					dispatchAction(ParseStr);
 				} catch (Exception e) {
 					throw (new WrapRuntimeException("Help Failed", e));
 				}
 			} else {
-				MyEdit.select(strt, strt + 2);
-				MyEdit.replaceSelection("");
+				myEdit.select(strt, strt + 2);
+				myEdit.replaceSelection("");
 			}
 		}
 
-		MyEdit.select(1, 0);
+		myEdit.select(1, 0);
 	}
 
 	/**
@@ -550,11 +550,11 @@ public class VerdantiumHelp
 	* Sets up the layout managers for the component.
 	*/
 	protected void arrangeLayout() {
-		MyPan.setOpaque(false);
-		MyPan.setLayout(new BorderLayout(0, 0));
-		MyPan.add("Center", MyDesk);
-		MyPan.setMinimumSize(new Dimension(2, 2));
-		MyPan.setPreferredSize(new Dimension(50, 50));
+		myPan.setOpaque(false);
+		myPan.setLayout(new BorderLayout(0, 0));
+		myPan.add("Center", myDesk);
+		myPan.setMinimumSize(new Dimension(2, 2));
+		myPan.setPreferredSize(new Dimension(50, 50));
 	}
 
 	/**
@@ -583,7 +583,7 @@ public class VerdantiumHelp
 				showPropertiesEditor(in);
 
 			if (in.getEtherID().equals(StandardEtherEvent.objUndoableClose)) {
-				PropL.firePropertyChange(
+				propL.firePropertyChange(
 					ProgramDirector.propertyHide,
 					null,
 					null);
@@ -670,10 +670,10 @@ public class VerdantiumHelp
 	 * Handles a change to whether only the designer can edit the component.
 	 */
 	public void handleOnlyDesignerEditsChange() {
-		MyEdit.setEditable(
+		myEdit.setEditable(
 			(DesignerControl.isDesignTime()) || (!isOnlyDesignerEdits()));
 		int count;
-		JInternalFrame[] AllFrames = MyDesk.getAllFrames();
+		JInternalFrame[] AllFrames = myDesk.getAllFrames();
 
 		for (count = 0; count < AllFrames.length; count++) {
 			AllFrames[count].updateUI();
@@ -681,9 +681,9 @@ public class VerdantiumHelp
 		}
 
 		if (isOnlyDesignerEdits())
-			MyEdit.setToolTipText(null);
+			myEdit.setToolTipText(null);
 		else
-			MyEdit.setToolTipText("Right-Click to edit properties");
+			myEdit.setToolTipText("Right-Click to edit properties");
 	}
 
 	/**
@@ -710,17 +710,17 @@ public class VerdantiumHelp
 
 	/**
 	* Sets the background color of the component and whether it is opaque.
-	* @param InC The background color for the component.
-	* @param Opaque whether the component is opaque.
+	* @param inC The background color for the component.
+	* @param opaque whether the component is opaque.
 	*/
-	protected void setBackgroundState(Color InC, boolean Opaque) {
-		MyEdit.setBackground(InC);
-		MyEdit.setOpaque(Opaque);
-		PropL.firePropertyChange(
+	protected void setBackgroundState(Color inC, boolean opaque) {
+		myEdit.setBackground(inC);
+		myEdit.setOpaque(opaque);
+		propL.firePropertyChange(
 			BackgroundPropertyEditor.AppBackground,
 			null,
 			null);
-		MyEdit.repaint();
+		myEdit.repaint();
 	}
 
 	/**
@@ -736,7 +736,7 @@ public class VerdantiumHelp
 	* @return The background color of the component.
 	*/
 	public Color getBackgroundColor() {
-		return (MyEdit.getBackground());
+		return (myEdit.getBackground());
 	}
 
 	/**
@@ -744,7 +744,7 @@ public class VerdantiumHelp
 	* @return Whether the component is opaque.
 	*/
 	public boolean getOpaqueFlag() {
-		return (MyEdit.isOpaque());
+		return (myEdit.isOpaque());
 	}
 
 	/**
@@ -752,7 +752,7 @@ public class VerdantiumHelp
 	* @param e The listener to be added.
 	*/
 	public void addPropertyChangeListener(PropertyChangeListener e) {
-		PropL.addPropertyChangeListener(e);
+		propL.addPropertyChangeListener(e);
 	}
 
 	/**
@@ -760,7 +760,7 @@ public class VerdantiumHelp
 	* @param e The listener to be removed.
 	*/
 	public void removePropertyChangeListener(PropertyChangeListener e) {
-		PropL.removePropertyChangeListener(e);
+		propL.removePropertyChangeListener(e);
 	}
 
 	/**
@@ -832,12 +832,12 @@ public class VerdantiumHelp
 			UndoManager.createInstanceUndoManager(
 				jundo.runtime.Runtime.getInitialMilieu());
 		ContainerAppInternalFrame MyFr =
-			new ContainerAppInternalFrame(mgr, MyDesk.getMap());
+			new ContainerAppInternalFrame(mgr, myDesk.getMap());
 		if (e.getProgramName() != null)
 			MyFr.setTitle(e.getProgramName());
 		else
 			MyFr.setTitle("Embedded Component");
-		MyDesk.add(MyFr, JLayeredPane.PALETTE_LAYER);
+		myDesk.add(MyFr, JLayeredPane.PALETTE_LAYER);
 		VerdantiumComponent in =
 			ProgramDirector.showComponent(e, MyFr.getContentPane());
 
@@ -846,7 +846,7 @@ public class VerdantiumHelp
 		MyFr.show();
 		if (EditorControl.getEditorMode() == EditorControl.EditMode)
 			EditorControl.setEditorMode(EditorControl.ResizeMode);
-		MyDesk.repaint();
+		myDesk.repaint();
 		ProgramDirector.setPointLocation(in, e.getClickPoint());
 		return (in);
 	}
@@ -863,10 +863,10 @@ public class VerdantiumHelp
 
 		MutableAttributeSet attr = new SimpleAttributeSet();
 		StyleConstants.setComponent(attr, MyFr);
-		int p = MyEdit.getCaretPosition();
+		int p = myEdit.getCaretPosition();
 
 		try {
-			(MyEdit.getDocument()).insertString(p, " ", attr);
+			(myEdit.getDocument()).insertString(p, " ", attr);
 		} catch (Exception ex) {
 			throw (new WrapRuntimeException("Help Failed", ex));
 		}
@@ -887,11 +887,11 @@ public class VerdantiumHelp
 		MyFr.setComponent(in);
 		MyFr.invalidate();
 		in.getGUI().invalidate();
-		MyEdit.invalidate();
+		myEdit.invalidate();
 		MyFr.revalidate();
 		in.getGUI().revalidate();
-		MyEdit.revalidate();
-		MyEdit.repaint();
+		myEdit.revalidate();
+		myEdit.repaint();
 
 		return (in);
 	}
@@ -906,10 +906,10 @@ public class VerdantiumHelp
 
 		MutableAttributeSet attr = new SimpleAttributeSet();
 		StyleConstants.setComponent(attr, MyFr);
-		int p = MyEdit.getCaretPosition();
+		int p = myEdit.getCaretPosition();
 
 		try {
-			(MyEdit.getDocument()).insertString(p, " ", attr);
+			(myEdit.getDocument()).insertString(p, " ", attr);
 		} catch (Exception e) {
 			throw (new WrapRuntimeException("Help Failed", e));
 		}
@@ -930,11 +930,11 @@ public class VerdantiumHelp
 		MyFr.setComponent(MyC);
 		MyFr.invalidate();
 		MyC.getGUI().invalidate();
-		MyEdit.invalidate();
+		myEdit.invalidate();
 		MyFr.revalidate();
 		MyC.getGUI().revalidate();
-		MyEdit.revalidate();
-		MyEdit.repaint();
+		myEdit.revalidate();
+		myEdit.repaint();
 	}
 
 	/**
@@ -951,14 +951,14 @@ public class VerdantiumHelp
 		Object[] params)
 		throws ResourceNotFoundException {
 		try {
-			Border MyBorder =
+			Border myBorder =
 				BorderPropertyEditor.createBorder(CName, types, params);
 
-			BorderClass = CName;
-			BorderTypes = types;
-			BorderParam = params;
+			borderClass = CName;
+			borderTypes = types;
+			borderParam = params;
 
-			getGUI().setBorder(MyBorder);
+			getGUI().setBorder(myBorder);
 			getGUI().revalidate();
 			getGUI().repaint();
 		} catch (ResourceNotFoundException ex) {
@@ -992,7 +992,7 @@ public class VerdantiumHelp
 	/**
 	* Provides support for firing property change events.
 	*/
-	private PropertyChangeSupport PropL = null;
+	private PropertyChangeSupport propL = null;
 	
 }
 
@@ -1007,7 +1007,7 @@ class VerdantiumHelpDesktopPane extends ContainerAppDesktopPane {
 	/**
 	* The text pane of the VerdantiumHelp.
 	*/
-	private JComponent BackPane = null;
+	private JComponent backPane = null;
 
 	/**
 	* Constructor for the desktop pane.
@@ -1018,44 +1018,44 @@ class VerdantiumHelpDesktopPane extends ContainerAppDesktopPane {
 		JComponent in) {
 		super(_mgr, inp);
 		setOpaqueFlag(false);
-		BackPane = in;
+		backPane = in;
 		setBackground(Color.blue);
-		add(BackPane, 0);
+		add(backPane, 0);
 	}
 
 	@Override
 	public void setBounds(int x, int y, int width, int height) {
 		super.setBounds(x, y, width, height);
-		BackPane.setBounds(0, 0, width, height);
+		backPane.setBounds(0, 0, width, height);
 	}
 
 	@Override
 	public void setBounds(Rectangle r) {
 		super.setBounds(r);
 		Rectangle r2 = new Rectangle(0, 0, r.width, r.height);
-		BackPane.setBounds(r2);
+		backPane.setBounds(r2);
 	}
 
 	@Override
 	public void setSize(Dimension d) {
 		super.setSize(d);
-		BackPane.setSize(d);
+		backPane.setSize(d);
 	}
 
 	@Override
 	public void setSize(int width, int height) {
 		super.setSize(width, height);
-		BackPane.setSize(width, height);
+		backPane.setSize(width, height);
 	}
 
 	@Override
 	public Dimension getMinimumSize() {
-		return (BackPane.getMinimumSize());
+		return (backPane.getMinimumSize());
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
-		return (BackPane.getPreferredSize());
+		return (backPane.getPreferredSize());
 	}
 	
 	

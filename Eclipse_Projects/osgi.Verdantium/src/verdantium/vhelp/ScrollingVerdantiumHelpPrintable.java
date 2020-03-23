@@ -304,6 +304,10 @@ public class ScrollingVerdantiumHelpPrintable
 		return (max <= (imageStrt + imageHeight));
 	}
 
+	/**
+	 * Gets the calculated number of pages.
+	 * @return The calculated number of pages.
+	 */
 	public int getNumPages() {
 		return (num_pages);
 	}

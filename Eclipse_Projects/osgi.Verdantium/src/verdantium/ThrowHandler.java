@@ -61,10 +61,11 @@ package verdantium;
 public interface ThrowHandler {
 	
 	/**
-	* Handles an exception for a Verdantium app. by displaying a message window.
+	* Handles an exception for a Verdantium app. by creating and displaying a message window.
 	* @param in The error or exception to handle.
 	* @param comp The component generating the exception.
 	* @param src The data model of the component generating the exception.
+	* @return The generated property editor for the message window.
 	*/
 	public VerdantiumPropertiesEditor handleThrow(Throwable in, VerdantiumComponent comp, PropertyChangeSource src);
 

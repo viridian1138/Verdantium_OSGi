@@ -277,11 +277,11 @@ public class ProgramDirector
 				.getEtherID()
 				.equals(StandardEtherEvent.loadNewPersistentFile)) {
 				Object[] param = (Object[]) (in.getParameter());
-				URL MyURL = (URL) (param[0]);
+				URL myURL = (URL) (param[0]);
 				Container parent = (Container) (param[1]);
-				VerdantiumComponent MyC = null;
-				MyC = loadNewPersistentFile(MyURL, parent);
-				return (MyC);
+				VerdantiumComponent myC = null;
+				myC = loadNewPersistentFile(myURL, parent);
+				return (myC);
 			}
 		}
 
@@ -293,18 +293,18 @@ public class ProgramDirector
 	* @return The property editor for ProgramDirector.
 	*/
 	public VerdantiumPropertiesEditor makePropertiesEditor() {
-		ProgramDirectorPropertyEditor MyEdit =
+		ProgramDirectorPropertyEditor myEdit =
 			new ProgramDirectorPropertyEditor(this, null);
-		return (MyEdit);
+		return (myEdit);
 	}
 
 	/**
 	* Shows the property editor for ProgramDirector.
 	*/
 	public void showPropertiesEditor() {
-		VerdantiumPropertiesEditor MyEdit = makePropertiesEditor();
+		VerdantiumPropertiesEditor myEdit = makePropertiesEditor();
 		ProgramDirector.showPropertyEditor(
-			MyEdit,
+			myEdit,
 			getGUI(),
 			"Program Director Property Editor");
 	}
@@ -325,9 +325,9 @@ public class ProgramDirector
 	 */
 	public ProgramDirector() {
 		propL = new PropertyChangeSupport(this);
-		ActionListener MyL =
+		ActionListener myL =
 			Adapters.createGActionListener(this, "handleRunButton");
-		runButton.addActionListener(MyL);
+		runButton.addActionListener(myL);
 		runButton.setToolTipText("Click here to Run");
 	}
 
@@ -1889,12 +1889,12 @@ public class ProgramDirector
 	* @return The supported flavors.
 	*/
 	public static DataFlavor[] getPersistentInputDataFlavorsSupported() {
-		DataFlavor[] MyF =
+		DataFlavor[] myF =
 			{
 				 new TransVersionBufferFlavor(
 					"Program Director",
 					"Program Director")};
-		return (MyF);
+		return (myF);
 	}
 
 	/**
@@ -1903,12 +1903,12 @@ public class ProgramDirector
 	* @return The supported flavors.
 	*/
 	public DataFlavor[] getPersistentOutputDataFlavorsSupported() {
-		DataFlavor[] MyF =
+		DataFlavor[] myF =
 			{
 				 new TransVersionBufferFlavor(
 					"Program Director",
 					"Program Director")};
-		return (MyF);
+		return (myF);
 	}
 
 	/**
@@ -1921,8 +1921,8 @@ public class ProgramDirector
 		if (trans == null) {
 		} else {
 			try {
-				TransVersionBuffer MyF = (TransVersionBuffer) trans;
-				VersionBuffer.chkNul(MyF);
+				TransVersionBuffer myF = (TransVersionBuffer) trans;
+				VersionBuffer.chkNul(myF);
 			} catch (ClassCastException e) {
 				throw (new DataFormatException(e));
 			}
@@ -1935,9 +1935,9 @@ public class ProgramDirector
     * @return Transferable to which the data is saved.
 	*/
 	public Transferable savePersistentData(DataFlavor flavor) {
-		TransVersionBuffer MyF =
+		TransVersionBuffer myF =
 			new TransVersionBuffer("Program Director", "Program Director");
-		return (MyF);
+		return (myF);
 	}
 
 	/**
@@ -1981,9 +1981,9 @@ public class ProgramDirector
 				}
 			}
 
-			ProgramDirector MyComp = new ProgramDirector();
+			ProgramDirector myComp = new ProgramDirector();
 			ProgramDirector.showComponent(
-				MyComp,
+				myComp,
 				"Program Director",
 				argv,
 				true);

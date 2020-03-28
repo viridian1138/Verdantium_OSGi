@@ -8,8 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JInternalFrame;
 import javax.swing.event.MouseInputListener;
 import javax.swing.plaf.ComponentUI;
-
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
+import javax.swing.plaf.metal.MetalInternalFrameUI;
 
 //$$strtCprt
 /*
@@ -65,7 +64,7 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 */
 
 /**
-* Implements a Windows internal frame UI for verdantium.  This UI is mainly intended
+* Implements a Metal internal frame UI for verdantium.  This UI is mainly intended
 * to skirt around some bugs in Swing's InternalFrame implementation.  To accomplish
 * this, the class disables the Swing glass pane entirely.  The UI works much better
 * with the glass pane disabled, especially for the purpose of creating compound
@@ -83,7 +82,7 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 * Getting rid of the glass pane fixes that, too.
 *
 * There are few reasons to make direct use of this class.
-* {@link verdantium.core.ContainerAppWindowsInternalFrameUI} already makes
+* {@link verdantium.core.ContainerAppMetalInternalFrameUI} already makes
 * seemingly all of the modifications that would really be useful.
 *
 * This class makes some use of Sun's Swing source code.  Given the amount of code used,
@@ -91,13 +90,13 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 *
 * @author Thorn Green
 */
-public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
+public class VerdantiumMetalInternalFrameUI extends MetalInternalFrameUI {
 
 	/**
 	 * Constructor.
 	 * @param b The internal frame in which to embed.
 	 */
-	public VerdantiumWindowsInternalFrameUI(JInternalFrame b) {
+	public VerdantiumMetalInternalFrameUI(JInternalFrame b) {
 		super(b);
 	}
 
@@ -107,7 +106,7 @@ public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
 	 * @return The created user interface.
 	 */
 	public static ComponentUI createUI(JComponent c) {
-		return new VerdantiumWindowsInternalFrameUI((JInternalFrame) c);
+		return new VerdantiumMetalInternalFrameUI((JInternalFrame) c);
 	}
 
 	/**
@@ -141,7 +140,7 @@ public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
 	 */
 	public class VerdantiumInternalFramePropertyChangeListener
 		extends InternalFramePropertyChangeListener {
-		
+	
 		@Override
 		public void propertyChange(PropertyChangeEvent evt) {
 			String prop = (String) evt.getPropertyName();
@@ -173,5 +172,7 @@ public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
 	}
 
 	
+	
 }
+
 

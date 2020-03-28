@@ -1,0 +1,50 @@
+<HTML>
+<BODY>
+<H1>verdantium</H1>
+<BR>
+<P>Verdantium (also known as the "embedding kit") is an advanced
+framework for 2-D document embedding using software components.
+Verdantium is configurable and component-independent.
+Components can be added to Verdantium without performing a re-compile
+on Verdantium (much like Photoshop plugins can be added to Photoshop).
+The components are dynamically linked to Verdantium at runtime.
+<BR>
+<P>Verdantium has four major pillars: Objects, Persistence,
+Embedding, and Scripting.  These were also the original four
+pillars of OpenDoc, but Verdantium builds the pillars differently.
+For instance in OpenDoc the object pillar is implemented by IBM's
+System Object Model (SOM), while in Verdantium the object pillar
+is implemented by the Java object model.  Java inherently has
+many (if not all) of the capabilities of a system object model.
+<BR>
+<P>The object pillar is the only one implemented entirely by
+the JDK itself.  The Verdantium code base rounds out the other
+three pillars.  The persistence and embedding pillars draw
+a significant amount of implementation support from Java Beans 
+and Java JFC/Swing respectively.  The scripting pillar, on the
+other hand, is written almost entirely from scratch.  The
+use of existing APIs from Java Beans and Java JFC/Swing
+significantly shortens the Verdantium code base, and makes
+Verdantium more familiar to existing Java programmers.
+<BR>
+<P>Verdantium uses a number of concepts from OpenDoc, but
+is not a port of OpenDoc to Java.  For instance, it does not
+attempt to implement a rendering layer that will make JFC/Swing
+emulate OpenDoc ODF.  Instead, components would have to be
+converted from ODF to Swing.  Verdantium is an inherently 
+Swing-oriented system.
+<BR>
+<P>Like certain other recently developed frameworks (particularly
+Metrowerks Powerplant) Verdantium uses a number of mix-in concepts.
+In Java, most mix-in functionality is implemented through
+interfaces.  For an introduction to mix-ins, see the article
+"The Power of Inheritance", Allen Hollub, BYTE Magazine, May 1993,
+pp. 221-226.  Note that by the description given by the author of
+this magazine article, Verdantium is somewhere between a "C++" and 
+a "Smalltalk" paradigm.
+<BR>
+<P>A full description of Verdantium is beyond the scope of this
+descriptive summary.  A document is currently being drafted to
+fully describe this architecture.
+</BODY>
+</HTML>

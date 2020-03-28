@@ -1,15 +1,16 @@
 package verdantium;
 
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.Color;
 
-import javax.swing.JComponent;
+import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.ComponentUI;
 
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
+import jundo.runtime.ExtMilieuRef;
+import jundo.runtime.IExtPair;
+import jundo.util.pdx_HashMapSh_pdx_ObjectRef;
+import verdantium.undo.UndoManager;
+import verdantium.xapp.BackgroundState;
+import verdantium.xapp.BackgroundStateHandler;
 
 //$$strtCprt
 /*
@@ -46,7 +47,7 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 *    |                       |                                                 |                                                                      |
 *    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
-*    | 09/29/2001            | Thorn Green (viridian_1138@yahoo.com)           | Support for multiple PLAFs.                                          | Made code changes to support multiple PLAFs.
+*    | 05/12/2002            | Thorn Green (viridian_1138@yahoo.com)           | Rendering bug.                                                       | Re-arranged desktop manager functionality to fix the bug.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -65,113 +66,137 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 */
 
 /**
-* Implements a Windows internal frame UI for verdantium.  This UI is mainly intended
-* to skirt around some bugs in Swing's InternalFrame implementation.  To accomplish
-* this, the class disables the Swing glass pane entirely.  The UI works much better
-* with the glass pane disabled, especially for the purpose of creating compound
-* documents.  With the glass pane, a frame's contents are "dead" to mouse events if
-* the frame is not selected.  It would defeat the purpose of {@link verdantium.core.ContainerApp}
-* if one had to select a particular embedded frame before doing anything with its contents.
-*
-* The InternalFrame in the current version of Swing does not have a focus manager in
-* the same sense that the JFrame does, and this causes problems for getting the proper
-* keyboard focus in an internal frame (Sun lists this as bug number 4109910).
-* Removing the glass pane makes it easier to deal with these problems.  Finally, the
-* author has noticed several problems with frames in nested JDesktopPane instances
-* (this is listed by Sun as bug number 4188846).
-* Glass pane does not seem to know what to do when JDesktopPanes frames are nested.
-* Getting rid of the glass pane fixes that, too.
-*
-* There are few reasons to make direct use of this class.
-* {@link verdantium.core.ContainerAppWindowsInternalFrameUI} already makes
-* seemingly all of the modifications that would really be useful.
-*
-* This class makes some use of Sun's Swing source code.  Given the amount of code used,
-* and the purpose for which it is used, the author considers this to be fair use.
-*
+* A desktop pane that fixes certain rendering issues in JDesktopPane.
+* 
 * @author Thorn Green
 */
-public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
+public class VerdantiumDesktopPane
+	extends JDesktopPane
+	implements BackgroundStateHandler {
+
+	/**
+	 * Undoable data reference for the pane's background color and opaqueness.
+	 */
+	transient protected BackgroundState bkgnd = null;
+	
+	/**
+	 * Whether the pane is currently opaque.
+	 */
+	transient protected boolean opaqueFlag = true;
+	
+	/**
+	 * Undoable map describing which internal frames are in the pane.
+	 */
+	transient protected pdx_HashMapSh_pdx_ObjectRef map = null;
 
 	/**
 	 * Constructor.
-	 * @param b The internal frame in which to embed.
+	 * @param _undoMgr The undo manager for the component associated with the desktop pane.
 	 */
-	public VerdantiumWindowsInternalFrameUI(JInternalFrame b) {
-		super(b);
+	public VerdantiumDesktopPane(UndoManager _undoMgr) {
+		super();
+		setDesktopManager(new VerdantiumDesktopManager());
+		bkgnd = new BackgroundState(_undoMgr);
+		bkgnd.setBackgroundState(getBackground(), true);
+		bkgnd.configureForEtherEvents(this, null);
+		ExtMilieuRef mil = _undoMgr.getCurrentMil();
+		IExtPair pair =
+			pdx_HashMapSh_pdx_ObjectRef.pdxm_allocate_HashMapSh(mil);
+		map = (pdx_HashMapSh_pdx_ObjectRef) (pair.getObject());
+		mil = pair.getMilieu();
+		_undoMgr.handleCommitTempChange(mil);
 	}
 
 	/**
-	 * Creates the user interface to be embedded in the JComponent.
-	 * @param c The internal frame in which to embed.
-	 * @return The created user interface.
+	 * Gets the undo manager for the component associated with the desktop pane.
+	 * @return The undo manager for the component associated with the desktop pane.
 	 */
-	public static ComponentUI createUI(JComponent c) {
-		return new VerdantiumWindowsInternalFrameUI((JInternalFrame) c);
-	}
+    public UndoManager getUndoMgr()
+    {
+         return( bkgnd.getUndoMgr() );
+    }
 
 	/**
-	 * Gets the glass pane dispatcher for the frame.
-	 * @return The glass pane dispatcher for the frame.
-	 */
-	protected MouseInputListener getGlassPaneDispatcher() {
-		return (glassPaneDispatcher);
+	* Returns whether the pane is opaque.
+	* Whether the pane is opaque.
+	*/
+	public boolean getOpaqueFlag() {
+		return (opaqueFlag);
 	}
-
-	@Override
-	protected void activateFrame(JInternalFrame f) {
-		super.activateFrame(f);
-	}
-
-	@Override
-	protected void deactivateFrame(JInternalFrame f) {
-		super.deactivateFrame(f);
-	}
-
-	@Override
-	protected PropertyChangeListener createPropertyChangeListener() {
-		return new VerdantiumInternalFramePropertyChangeListener();
-	}
-
-	/**
-	 * Property change listener for internal frames.
-	 * 
-	 * @author tgreen
-	 *
-	 */
-	public class VerdantiumInternalFramePropertyChangeListener
-		extends InternalFramePropertyChangeListener {
-		
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			String prop = (String) evt.getPropertyName();
-			JInternalFrame f = (JInternalFrame) evt.getSource();
-			Object newValue = evt.getNewValue();
-			Object oldValue = evt.getOldValue();
-			// aSSERT(frame == f) - This should always be true
-
-			if (JInternalFrame.IS_SELECTED_PROPERTY.equals(prop)) {
-				Component glassPane = f.getGlassPane();
-				if (newValue == Boolean.TRUE && oldValue == Boolean.FALSE) {
-					activateFrame(f);
-					glassPane.removeMouseListener(getGlassPaneDispatcher());
-					glassPane.removeMouseMotionListener(
-						getGlassPaneDispatcher());
-					glassPane.setVisible(false);
-				} else if (
-					newValue == Boolean.FALSE && oldValue == Boolean.TRUE) {
-					deactivateFrame(f);
-					/* glassPane.addMouseListener( getGlassPaneDispatcher() );
-							glassPane.addMouseMotionListener( getGlassPaneDispatcher() );
-					glassPane.setVisible(true); */
-				}
-			} else {
-				super.propertyChange(evt);
-			}
-
-		}
-	}
-
 	
+	/**
+	* Sets whether the pane is opaque.
+	* @param in Whether the pane is opaque.
+	*/
+	public void setOpaqueFlag(boolean in) {
+		bkgnd.setBackgroundState(getBackground(), in);
+	}
+
+	/**
+	* Returns whether the pane is opaque.
+	* @return Whether the pane is opaque.
+	*/
+	public boolean isOpaque() {
+		return (opaqueFlag);
+	}
+
+	/**
+	 * Handles a change to the background color and/or opacity.
+	 * @param inC The background color to buse for the pane.
+	 * @param opaque Whether the pane is to be opaque.
+	 */
+	public void handleBackgroundState(Color inC, boolean opaque) {
+		super.setBackground(inC);
+		opaqueFlag = opaque;
+		repaint();
+	}
+
+	/**
+	 * Sets the background color of the pane.
+	 * @param in The background color of the pane.
+	 */
+	public void setBackground(Color in) {
+		if (bkgnd != null) {
+			bkgnd.setBackgroundState(in, getOpaqueFlag());
+		} else {
+			super.setBackground(in);
+		}
+
+	}
+
+	/**
+	 * Gets the undoable data reference for the pane's background color and opaqueness.
+	 * @return The undoable data reference for the pane's background color and opaqueness.
+	 */
+	public BackgroundState getBkgnd() {
+		return (bkgnd);
+	}
+
+	/**
+	 * Gets the undoable map describing which internal frames are in the pane.
+	 * @return The undoable map describing which internal frames are in the pane.
+	 */
+	public pdx_HashMapSh_pdx_ObjectRef getMap() {
+		return (map);
+	}
+
+	/**
+	 * Handles the destruction of the desktop pane.
+	 */
+	public void handleDestroy() {
+		JInternalFrame[] allFrames = getAllFrames();
+		int max = allFrames.length;
+		int count;
+		for (count = 0; count < max; ++count) {
+			try {
+				allFrames[count].dispose();
+			} catch (Exception e) {
+				e.printStackTrace(System.out);
+			}
+		}
+		bkgnd.handleDestroy();
+	}
+	
+
 }
 

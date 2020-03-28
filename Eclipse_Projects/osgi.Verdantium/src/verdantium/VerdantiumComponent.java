@@ -1,15 +1,13 @@
 package verdantium;
 
-import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
+import java.awt.datatransfer.DataFlavor;
+import java.awt.datatransfer.Transferable;
+import java.io.IOException;
 
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.ComponentUI;
 
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
+import verdantium.utils.ComponentNotFoundException;
+import verdantium.utils.ResourceNotFoundException;
 
 //$$strtCprt
 /*
@@ -46,7 +44,8 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 *    |                       |                                                 |                                                                      |
 *    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
-*    | 09/29/2001            | Thorn Green (viridian_1138@yahoo.com)           | Support for multiple PLAFs.                                          | Made code changes to support multiple PLAFs.
+*    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
+*    | 10/05/2001            | Thorn Green (viridian_1138@yahoo.com)           | Support for command-line arguments.                                  | Added support for command-line arguments (docs only).
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -65,113 +64,91 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 */
 
 /**
-* Implements a Windows internal frame UI for verdantium.  This UI is mainly intended
-* to skirt around some bugs in Swing's InternalFrame implementation.  To accomplish
-* this, the class disables the Swing glass pane entirely.  The UI works much better
-* with the glass pane disabled, especially for the purpose of creating compound
-* documents.  With the glass pane, a frame's contents are "dead" to mouse events if
-* the frame is not selected.  It would defeat the purpose of {@link verdantium.core.ContainerApp}
-* if one had to select a particular embedded frame before doing anything with its contents.
-*
-* The InternalFrame in the current version of Swing does not have a focus manager in
-* the same sense that the JFrame does, and this causes problems for getting the proper
-* keyboard focus in an internal frame (Sun lists this as bug number 4109910).
-* Removing the glass pane makes it easier to deal with these problems.  Finally, the
-* author has noticed several problems with frames in nested JDesktopPane instances
-* (this is listed by Sun as bug number 4188846).
-* Glass pane does not seem to know what to do when JDesktopPanes frames are nested.
-* Getting rid of the glass pane fixes that, too.
-*
-* There are few reasons to make direct use of this class.
-* {@link verdantium.core.ContainerAppWindowsInternalFrameUI} already makes
-* seemingly all of the modifications that would really be useful.
-*
-* This class makes some use of Sun's Swing source code.  Given the amount of code used,
-* and the purpose for which it is used, the author considers this to be fair use.
-*
+* An embeddable component supporting multiple format persistence, and
+* scripting, where the scripting support is provided by the inherited interface
+* {@link EtherEventHandler}.  Note that the {@link #getGUI()} method allows
+* one to change the user interface of a component via a subclass that overrides
+* getGUI().
+* <P>
+* In addition to the interface shown here, all VerdantiumComponent classes
+* are required to have a static method:
+* <P>
+* public static DataFlavor[] getPersistentInputDataFlavorsSupported( ) { return( null ); }
+* <P>
+* which returns the data flavors that the component is capable of loading.
+* Also, all VerdantiumComponent classes except for property editors are
+* required to have a zero argument constructor.  Many components have as an
+* optional feature a main() method that allows them to be run as stand-alone applications.
+* An example of such a main() method for an example class called MyComponent is as follows:
+* <P>
+* <pre>public static void main( String argv[] )
+* 	{
+*	ProgramDirector.initUI();
+*	MyComponent myComp = new MyComponent();
+*	ProgramDirector.showComponent( myComp , "My Component" , argv , false );
+* 	}
+* </pre>
 * @author Thorn Green
 */
-public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
+public interface VerdantiumComponent extends EtherEventHandler {
+	
+	/**
+	* Returns the JComponent that provides the visual interface for this
+	* component.
+	* 
+	* @return The JComponent that provides the visual interface.
+	*/
+	public JComponent getGUI();
+	
+	/**
+	* Handles the destruction of the component.  Usually, a component will call
+	* handleDestroy() on any sub-components it has, and break and event feeds it's
+	* getting from other components.
+	*/
+	public void handleDestroy();
 
 	/**
-	 * Constructor.
-	 * @param b The internal frame in which to embed.
-	 */
-	public VerdantiumWindowsInternalFrameUI(JInternalFrame b) {
-		super(b);
-	}
-
+	* Returns the set of that flavors that this component can now save to.
+	* <P>
+	* If more than zero flavors are returned, then for the current version
+	* of Verdantium the flavor list must fit one of two criteria:
+	* <P>
+	* 1. At least one of the flavors is a TransVersionBufferFlavor (e.g. a flavor
+	* associated with a TransVersionBuffer).
+	* <P>
+	* 2. The flavor at index zero in the returned flavor list must be associated with
+	* a Transferable that is either Serializable or Externalizable.
+	* 
+	* @return The supported flavors.
+	*/
+	public DataFlavor[] getPersistentOutputDataFlavorsSupported();
+	
 	/**
-	 * Creates the user interface to be embedded in the JComponent.
-	 * @param c The internal frame in which to embed.
-	 * @return The created user interface.
-	 */
-	public static ComponentUI createUI(JComponent c) {
-		return new VerdantiumWindowsInternalFrameUI((JInternalFrame) c);
-	}
-
+	* Loads persistent data in a data format defined by <code>flavor</code>
+	* when <code>trans</code> is NOT equal to null; the persistent data is
+	* packaged in the Transferable <code>trans</code>.  When <code>trans</code> is
+	* equal to null, reset the component to its initial state and then repaint
+	* its GUI.
+	* <P>
+	* The component may assume that the flavor is one of the ones supported.
+	* 
+	* @param flavor The flavor in which to load the data.
+    * @param trans The transferable from which to load the data.
+	*/
+	public void loadPersistentData(DataFlavor flavor, Transferable trans)
+		throws IOException, ClassNotFoundException, ResourceNotFoundException, ComponentNotFoundException;
+	
 	/**
-	 * Gets the glass pane dispatcher for the frame.
-	 * @return The glass pane dispatcher for the frame.
-	 */
-	protected MouseInputListener getGlassPaneDispatcher() {
-		return (glassPaneDispatcher);
-	}
-
-	@Override
-	protected void activateFrame(JInternalFrame f) {
-		super.activateFrame(f);
-	}
-
-	@Override
-	protected void deactivateFrame(JInternalFrame f) {
-		super.deactivateFrame(f);
-	}
-
-	@Override
-	protected PropertyChangeListener createPropertyChangeListener() {
-		return new VerdantiumInternalFramePropertyChangeListener();
-	}
-
-	/**
-	 * Property change listener for internal frames.
-	 * 
-	 * @author tgreen
-	 *
-	 */
-	public class VerdantiumInternalFramePropertyChangeListener
-		extends InternalFramePropertyChangeListener {
-		
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			String prop = (String) evt.getPropertyName();
-			JInternalFrame f = (JInternalFrame) evt.getSource();
-			Object newValue = evt.getNewValue();
-			Object oldValue = evt.getOldValue();
-			// aSSERT(frame == f) - This should always be true
-
-			if (JInternalFrame.IS_SELECTED_PROPERTY.equals(prop)) {
-				Component glassPane = f.getGlassPane();
-				if (newValue == Boolean.TRUE && oldValue == Boolean.FALSE) {
-					activateFrame(f);
-					glassPane.removeMouseListener(getGlassPaneDispatcher());
-					glassPane.removeMouseMotionListener(
-						getGlassPaneDispatcher());
-					glassPane.setVisible(false);
-				} else if (
-					newValue == Boolean.FALSE && oldValue == Boolean.TRUE) {
-					deactivateFrame(f);
-					/* glassPane.addMouseListener( getGlassPaneDispatcher() );
-							glassPane.addMouseMotionListener( getGlassPaneDispatcher() );
-					glassPane.setVisible(true); */
-				}
-			} else {
-				super.propertyChange(evt);
-			}
-
-		}
-	}
-
+	* Saves persistent data in a data format defined by <code>flavor</code> by
+	* placing the data in an appropriate Transferable, and then returning the
+	* Transferable.
+	* <P>
+	* The component may assume that the flavor is one of the ones supported.
+	* 
+	* @param The flavor in which to save the data.
+    * @return Transferable to which the data is saved.
+	*/
+	public Transferable savePersistentData(DataFlavor flavor) throws IOException;
 	
 }
 

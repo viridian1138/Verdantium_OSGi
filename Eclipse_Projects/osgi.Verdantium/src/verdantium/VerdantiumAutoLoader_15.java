@@ -1,13 +1,10 @@
-package verdantium.standard;
+package verdantium;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+//import java.applet.Applet;
+import java.awt.Point;
+import java.net.URL;
 
-import javax.swing.JComponent;
-
-import verdantium.core.ContainerAppDesktopPane;
-import verdantium.undo.UndoManager;
+import meta.WrapRuntimeException;
 
 //$$strtCprt
 /*
@@ -43,9 +40,12 @@ import verdantium.undo.UndoManager;
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
 *    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/10/2000            | Thorn Green (viridian_1138@yahoo.com)           | Needed a standard way to load docs. from applets.                    | Created VerdantiumAutoLoader as a variant on geomdir.applied.VectorAutoLoader
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
+*    | 03/01/2002            | Thorn Green (viridian_1138@yahoo.com)           | EtherEvent performance enhancements.                                 | EtherEvent performance enhancements.
+*    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
-*    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -62,76 +62,65 @@ import verdantium.undo.UndoManager;
 */
 
 /**
-* The desktop pane used to hold the embedded frames of the drawing application.
+* An applet that loads and displays a Verdantium-compatible document.  No longer used.
 * 
-* @author Thorn Green
+* @author Thorn Green, David Halliday
 */
-public class DrawAppDesktopPane extends ContainerAppDesktopPane {
+public class VerdantiumAutoLoader_15 extends VerdantiumApplet_15 {
 	
 	/**
-	* The drawing pane.
-	*/
-	private JComponent backPane = null;
-
+	 * String representation of URL for the host component to load as its state, or null if there is to be no such loading.
+	 */
+	transient protected String filename;
+	
 	/**
-	* Constructs the desktop pane.
-	* @param _mgr The manager for multi-level undo.
-	* @param  ind The DrawApp associated with the desktop pane.
-	* @param in The drawing pane.
-	*/
-	public DrawAppDesktopPane(UndoManager _mgr, DrawApp ind, JComponent in) {
-		super(_mgr, ind);
-		setOpaqueFlag(false);
-		backPane = in;
-		setBackground(Color.blue);
-		add(backPane, 0);
-	}
+	 * String representation of URL for the host component to load and embed, or null if there is to be no such loading.
+	 */
+	transient protected String fembed;
 
-	/* public void update( Graphics g )
-		{
-		if( opaqueFlag )
-			{
-			Rectangle r = getBounds();
-			g.setColor( getBackground() );
-			g.fillRect( r.x , r.y , r.width , r.height );
+	@Override
+	public void init() {
+		super.init();
+
+		filename = getParameter("filename");
+		fembed = getParameter("fembed");
+
+		XKit myX = new XKit(this);
+
+		try {
+			if (filename != null) {
+				URL u = myX.getBaseURL(filename, true, VerdantiumApplet.class);
+				EtherEvent send =
+					new StandardEtherEvent(
+						this,
+						StandardEtherEvent.objOpenEvent,
+						u,
+						myApp);
+				ProgramDirector.fireEtherEvent(send, null);
 			}
-		} */
 
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		backPane.setBounds(0, 0, width, height);
+			if (fembed != null) {
+				Point OutPt = new Point(20, 20);
+				URL u = myX.getBaseURL(fembed, true, VerdantiumApplet.class);
+				EtherEvent send =
+					new ProgramDirectorEvent(
+						this,
+						ProgramDirectorEvent.loadURL,
+						null,
+						myApp);
+				Object[] param = { null, OutPt, new Boolean(false)};
+				param[0] = u;
+				send.setParameter(param);
+				ProgramDirector.fireEtherEvent(send, null);
+			}
+		} catch (Throwable e) {
+			throw (new WrapRuntimeException("File Load Failed", e));
+		}
+
+		if ((filename == null) && (fembed == null)) {
+			throw (new RuntimeException("File Not Specified"));
+		}
 	}
 
-	@Override
-	public void setBounds(Rectangle r) {
-		super.setBounds(r);
-		Rectangle r2 = new Rectangle(0, 0, r.width, r.height);
-		backPane.setBounds(r2);
-	}
-
-	@Override
-	public void setSize(Dimension d) {
-		super.setSize(d);
-		backPane.setSize(d);
-	}
-
-	@Override
-	public void setSize(int width, int height) {
-		super.setSize(width, height);
-		backPane.setSize(width, height);
-	}
-
-	@Override
-	public Dimension getMinimumSize() {
-		return (backPane.getMinimumSize());
-	}
-
-	@Override
-	public Dimension getPreferredSize() {
-		return (backPane.getPreferredSize());
-	}
-
-	
-}
+};
 

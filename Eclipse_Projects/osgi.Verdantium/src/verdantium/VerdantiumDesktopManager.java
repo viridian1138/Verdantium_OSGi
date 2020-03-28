@@ -1,15 +1,10 @@
 package verdantium;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 
+import javax.swing.DefaultDesktopManager;
 import javax.swing.JComponent;
-import javax.swing.JInternalFrame;
-import javax.swing.event.MouseInputListener;
-import javax.swing.plaf.ComponentUI;
-
-import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
+import javax.swing.JDesktopPane;
 
 //$$strtCprt
 /*
@@ -46,7 +41,7 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 *    |                       |                                                 |                                                                      |
 *    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
-*    | 09/29/2001            | Thorn Green (viridian_1138@yahoo.com)           | Support for multiple PLAFs.                                          | Made code changes to support multiple PLAFs.
+*    | 05/12/2002            | Thorn Green (viridian_1138@yahoo.com)           | Rendering bug.                                                       | Re-arranged desktop manager functionality to fix the bug.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -65,110 +60,78 @@ import com.sun.java.swing.plaf.windows.WindowsInternalFrameUI;
 */
 
 /**
-* Implements a Windows internal frame UI for verdantium.  This UI is mainly intended
-* to skirt around some bugs in Swing's InternalFrame implementation.  To accomplish
-* this, the class disables the Swing glass pane entirely.  The UI works much better
-* with the glass pane disabled, especially for the purpose of creating compound
-* documents.  With the glass pane, a frame's contents are "dead" to mouse events if
-* the frame is not selected.  It would defeat the purpose of {@link verdantium.core.ContainerApp}
-* if one had to select a particular embedded frame before doing anything with its contents.
-*
-* The InternalFrame in the current version of Swing does not have a focus manager in
-* the same sense that the JFrame does, and this causes problems for getting the proper
-* keyboard focus in an internal frame (Sun lists this as bug number 4109910).
-* Removing the glass pane makes it easier to deal with these problems.  Finally, the
-* author has noticed several problems with frames in nested JDesktopPane instances
-* (this is listed by Sun as bug number 4188846).
-* Glass pane does not seem to know what to do when JDesktopPanes frames are nested.
-* Getting rid of the glass pane fixes that, too.
-*
-* There are few reasons to make direct use of this class.
-* {@link verdantium.core.ContainerAppWindowsInternalFrameUI} already makes
-* seemingly all of the modifications that would really be useful.
-*
-* This class makes some use of Sun's Swing source code.  Given the amount of code used,
-* and the purpose for which it is used, the author considers this to be fair use.
-*
+* Desktop manager that handles frame dragging with transparent
+* desktop pane, fixes rendering bugs, and implements part of
+* the support for multi-level undo.
+* <P>
 * @author Thorn Green
 */
-public class VerdantiumWindowsInternalFrameUI extends WindowsInternalFrameUI {
+public class VerdantiumDesktopManager extends DefaultDesktopManager {
 
 	/**
-	 * Constructor.
-	 * @param b The internal frame in which to embed.
+	 * Whether the desktop manager's state is currently updating.
 	 */
-	public VerdantiumWindowsInternalFrameUI(JInternalFrame b) {
-		super(b);
-	}
+	protected static boolean isUpdating = false;
 
 	/**
-	 * Creates the user interface to be embedded in the JComponent.
-	 * @param c The internal frame in which to embed.
-	 * @return The created user interface.
+	 * Gets whether the desktop manager's state is currently updating.
+	 * @return Whether the desktop manager's state is currently updating.
 	 */
-	public static ComponentUI createUI(JComponent c) {
-		return new VerdantiumWindowsInternalFrameUI((JInternalFrame) c);
-	}
-
-	/**
-	 * Gets the glass pane dispatcher for the frame.
-	 * @return The glass pane dispatcher for the frame.
-	 */
-	protected MouseInputListener getGlassPaneDispatcher() {
-		return (glassPaneDispatcher);
+	public static boolean isUpdating() {
+		return (isUpdating);
 	}
 
 	@Override
-	protected void activateFrame(JInternalFrame f) {
-		super.activateFrame(f);
+	public void dragFrame(JComponent f, int newX, int newY) {
+		isUpdating = true;
+		try {
+			if (f.isOpaque())
+				super.dragFrame(f, newX, newY);
+			else
+				setBoundsForFrame(f, newX, newY, f.getWidth(), f.getHeight());
+		} catch (Throwable e) {
+			e.printStackTrace(System.out);
+		}
+		isUpdating = false;
 	}
 
 	@Override
-	protected void deactivateFrame(JInternalFrame f) {
-		super.deactivateFrame(f);
+	public void resizeFrame(
+		JComponent f,
+		int newX,
+		int newY,
+		int newWidth,
+		int newHeight) {
+		isUpdating = true;
+		try {
+			super.resizeFrame(f, newX, newY, newWidth, newHeight);
+		} catch (Throwable e) {
+			e.printStackTrace(System.out);
+		}
+		isUpdating = false;
 	}
 
 	@Override
-	protected PropertyChangeListener createPropertyChangeListener() {
-		return new VerdantiumInternalFramePropertyChangeListener();
+	public void endDraggingFrame(JComponent f) {
+		super.endDraggingFrame(f);
+		Component c = f;
+		while (!(c instanceof JDesktopPane))
+			c = c.getParent();
+		c.repaint();
+		if (f instanceof VerdantiumUndoableInternalFrame) {
+			((VerdantiumUndoableInternalFrame) f).handlePostDragOp();
+		}
 	}
 
-	/**
-	 * Property change listener for internal frames.
-	 * 
-	 * @author tgreen
-	 *
-	 */
-	public class VerdantiumInternalFramePropertyChangeListener
-		extends InternalFramePropertyChangeListener {
-		
-		@Override
-		public void propertyChange(PropertyChangeEvent evt) {
-			String prop = (String) evt.getPropertyName();
-			JInternalFrame f = (JInternalFrame) evt.getSource();
-			Object newValue = evt.getNewValue();
-			Object oldValue = evt.getOldValue();
-			// aSSERT(frame == f) - This should always be true
-
-			if (JInternalFrame.IS_SELECTED_PROPERTY.equals(prop)) {
-				Component glassPane = f.getGlassPane();
-				if (newValue == Boolean.TRUE && oldValue == Boolean.FALSE) {
-					activateFrame(f);
-					glassPane.removeMouseListener(getGlassPaneDispatcher());
-					glassPane.removeMouseMotionListener(
-						getGlassPaneDispatcher());
-					glassPane.setVisible(false);
-				} else if (
-					newValue == Boolean.FALSE && oldValue == Boolean.TRUE) {
-					deactivateFrame(f);
-					/* glassPane.addMouseListener( getGlassPaneDispatcher() );
-							glassPane.addMouseMotionListener( getGlassPaneDispatcher() );
-					glassPane.setVisible(true); */
-				}
-			} else {
-				super.propertyChange(evt);
-			}
-
+	@Override
+	public void endResizingFrame(JComponent f) {
+		super.endResizingFrame(f);
+		Component c = f;
+		while (!(c instanceof JDesktopPane))
+			c = c.getParent();
+		c.repaint();
+		if (f instanceof VerdantiumUndoableInternalFrame) {
+			((VerdantiumUndoableInternalFrame) f).handlePostDragOp();
 		}
 	}
 

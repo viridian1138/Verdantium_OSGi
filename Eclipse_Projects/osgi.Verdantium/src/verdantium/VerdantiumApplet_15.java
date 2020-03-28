@@ -1,13 +1,12 @@
-package verdantium.standard;
+package verdantium;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Rectangle;
+import java.awt.Component;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
-import javax.swing.JComponent;
+import javax.swing.JApplet;
 
-import verdantium.core.ContainerAppDesktopPane;
-import verdantium.undo.UndoManager;
+import meta.WrapRuntimeException;
 
 //$$strtCprt
 /*
@@ -42,8 +41,11 @@ import verdantium.undo.UndoManager;
 *    | Date of Modification  |    Author of Modification                       |    Reason for Modification                                           |    Description of Modification (use multiple rows if needed)  ... 
 *    |-----------------------|-------------------------------------------------|----------------------------------------------------------------------|---------------------------------------------------------------...
 *    |                       |                                                 |                                                                      |
-*    | 9/24/2000             | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a standard way to document source file changes.    | Added a souce modification list to the documentation so that changes to the souce could be recorded. 
+*    | 10/07/2000            | Thorn Green (viridian_1138@yahoo.com)           | Needed to provide a buffer against future applet security problems.  | Created this class to buffer the actual applet class from VerdantiumApplet. 
 *    | 10/22/2000            | Thorn Green (viridian_1138@yahoo.com)           | Methods did not have names that followed standard Java conventions.  | Performed a global modification to bring the names within spec.
+*    | 08/12/2001            | Thorn Green (viridian_1138@yahoo.com)           | First-Cut at Error Handling.                                         | First-Cut at Error Handling.
+*    | 05/10/2002            | Thorn Green (viridian_1138@yahoo.com)           | Redundant information in persistent storage.                         | Made numerous persistence and packaging changes.
+*    | 10/05/2002            | Thorn Green (viridian_1138@yahoo.com)           | Run GeoCard from web.                                                | Debugged and made changes to run GeoCard from web.
 *    | 08/07/2004            | Thorn Green (viridian_1138@yahoo.com)           | Establish baseline for all changes in the last year.                 | Establish baseline for all changes in the last year.
 *    |                       |                                                 |                                                                      |
 *    |                       |                                                 |                                                                      |
@@ -62,76 +64,118 @@ import verdantium.undo.UndoManager;
 */
 
 /**
-* The desktop pane used to hold the embedded frames of the drawing application.
+* An applet that displays a Verdantium component in a browser.  No longer used.
 * 
 * @author Thorn Green
 */
-public class DrawAppDesktopPane extends ContainerAppDesktopPane {
+public class VerdantiumApplet_15 extends JApplet {
 	
 	/**
-	* The drawing pane.
+	* Property change event label indicating the start of an applet.
 	*/
-	private JComponent backPane = null;
+	public static final String appletStart = "appletStart";
+	
+	/**
+	* Property change event label indicating the stopping of an applet.
+	*/
+	public static final String appletStop = "appletStop";
 
 	/**
-	* Constructs the desktop pane.
-	* @param _mgr The manager for multi-level undo.
-	* @param  ind The DrawApp associated with the desktop pane.
-	* @param in The drawing pane.
+	* The XKit for the applet.
 	*/
-	public DrawAppDesktopPane(UndoManager _mgr, DrawApp ind, JComponent in) {
-		super(_mgr, ind);
-		setOpaqueFlag(false);
-		backPane = in;
-		setBackground(Color.blue);
-		add(backPane, 0);
-	}
-
-	/* public void update( Graphics g )
-		{
-		if( opaqueFlag )
-			{
-			Rectangle r = getBounds();
-			g.setColor( getBackground() );
-			g.fillRect( r.x , r.y , r.width , r.height );
-			}
-		} */
-
-	@Override
-	public void setBounds(int x, int y, int width, int height) {
-		super.setBounds(x, y, width, height);
-		backPane.setBounds(0, 0, width, height);
-	}
+	transient protected XKit myX;
+	
+	/**
+	* The component for the applet.
+	*/
+	transient protected VerdantiumComponent myApp;
+	
+	/**
+	 * Whether the VM is running an applet.
+	 */
+	private static boolean apppletActivated = false;
+	
+	/**
+	 * Support for class-level property changes.
+	 */
+	private static PropertyChangeSupport propSL =
+		new PropertyChangeSupport("Verdantium Applet");
 
 	@Override
-	public void setBounds(Rectangle r) {
-		super.setBounds(r);
-		Rectangle r2 = new Rectangle(0, 0, r.width, r.height);
-		backPane.setBounds(r2);
-	}
-
-	@Override
-	public void setSize(Dimension d) {
-		super.setSize(d);
-		backPane.setSize(d);
-	}
-
-	@Override
-	public void setSize(int width, int height) {
-		super.setSize(width, height);
-		backPane.setSize(width, height);
+	public void init() {
+		try {
+			apppletActivated = true;
+			Class<? extends VerdantiumComponent> myClass = (Class<? extends VerdantiumComponent>)( Class.forName(getParameter("class")) );
+			myX = new XKit(this);
+			myApp = myClass.newInstance();
+			ProgramDirector.showComponent(myApp, /* getContentPane() */
+			this, "Embedded Applet");
+			Component myComp = myApp.getGUI();
+			invalidate();
+			myComp.invalidate();
+			validate();
+			myComp.validate();
+		} catch (Exception e) {
+			throw (new WrapRuntimeException("Applet Init Failed", e));
+		}
 	}
 
 	@Override
-	public Dimension getMinimumSize() {
-		return (backPane.getMinimumSize());
+	public void start() {
+		propSL.firePropertyChange(appletStart, null, null);
 	}
 
 	@Override
-	public Dimension getPreferredSize() {
-		return (backPane.getPreferredSize());
+	public void stop() {
+		propSL.firePropertyChange(appletStop, null, null);
+	}
+
+	/**
+	 * Fires an applet property change to all listeners.
+	 * @param propertyName The name of the property that changed.
+	 * @param oldValue The old value of the property.
+	 * @param newValue The new value of the property.
+	 */
+	public static void fireAppletPropertyChange(
+		String propertyName,
+		Object oldValue,
+		Object newValue) {
+		propSL.firePropertyChange(propertyName, oldValue, newValue);
+	}
+
+	/**
+	* Adds a property change listener to the class.
+	* @param in The listener to be added.
+	*/
+	public static void addClassPropertyChangeListener(PropertyChangeListener in) {
+		propSL.addPropertyChangeListener(in);
+	}
+
+	/**
+	* Removes a property change listener from the class.
+	* @param in The listener to be removed.
+	*/
+	public static void removeClassPropertyChangeListener(PropertyChangeListener in) {
+		propSL.removePropertyChangeListener(in);
+	}
+
+	/**
+	* Returns whether the VM is running an applet.
+	* @return Whether the VM is running an applet.
+	*/
+	public static boolean isAppletActivated() {
+		return (apppletActivated);
+	}
+
+	/**
+	* Sets whether the VM is running an applet.
+	* @param in Whether the VM is running an applet.
+	*/
+	public static void setAppletActivated(boolean in) {
+		apppletActivated = in;
 	}
 
 	
 }
+
 

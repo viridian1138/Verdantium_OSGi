@@ -463,9 +463,9 @@ public class DrawApp
             pdx_LowLevelList_pdx_ObjectRef lowl =
                     drawingList.pdxm_exportNode(mil);
             lowl = lowl.pdxm_searchHead( mil );
-            boolean Done = false;
+            boolean done = false;
             
-            while (!Done) {
+            while (!done) {
                 pdx_DrawingObject_pdx_ObjectRef myo = (pdx_DrawingObject_pdx_ObjectRef) (lowl.pdxm_getNode(mil));
                 if( myo != dragDrw ) {
                     myo.pdxm_draw(mil, this, g, currentMode);
@@ -480,7 +480,7 @@ public class DrawApp
                 }
                 
                 lowl = lowl.pdxm_right( mil );
-                Done = lowl.pdxm_getHead( mil );
+                done = lowl.pdxm_getHead( mil );
             }
         }
         

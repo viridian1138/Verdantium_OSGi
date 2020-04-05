@@ -13,6 +13,7 @@ import java.util.Vector;
 
 import meta.DataFormatException;
 import meta.HighLevelList;
+import meta.StdLowLevelList;
 import meta.VersionBuffer;
 import meta.WrapRuntimeException;
 import verdantium.EtherEvent;
@@ -226,8 +227,8 @@ public class PageWelderHyperButton extends HyperButton {
 	 * @return The result of recording the macro.
 	 */
 	protected Object recordEventOntoEncloser(String evtDesc, Object args) {
-		setMacroList(new HighLevelList());
-		setResultTable(new Vector());
+		setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
+		setResultTable(new Vector<Object>());
 		setParamVal(2);
 		EtherEvent eCopy = null;
 		getResultTable().setSize(getParamVal());
@@ -309,8 +310,8 @@ public class PageWelderHyperButton extends HyperButton {
 		setImage(null);
 		setImageBytes(null);
 		setImageMode(NO_MODE);
-		setMacroList(new HighLevelList());
-		setResultTable(new Vector());
+		setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
+		setResultTable(new Vector<Object>());
 		setParamVal(0);
 		setText("Button");
 		bkgnd.setBackgroundState(DefaultBkgnd, true);
@@ -356,12 +357,12 @@ public class PageWelderHyperButton extends HyperButton {
 					if (T_flavor
 						.getComponentName()
 						.equals("Page Welder Hyper Button")) {
-						setMacroList(new HighLevelList());
-						setResultTable(new Vector());
+						setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
+						setResultTable(new Vector<Object>());
 						setParamVal(0);
 						setParamVal(MyF.getInt("ParamVal"));
 						setMacroList(
-							(HighLevelList) (MyF.getProperty("MacroList")));
+							(HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) (MyF.getProperty("MacroList")));
 						VersionBuffer.chkNul(getMacroList());
 						macroMap.readData(MyF);
 
@@ -389,12 +390,12 @@ public class PageWelderHyperButton extends HyperButton {
 					}
 
 					if (T_flavor.getComponentName().equals("Macro Recorder")) {
-						setMacroList(new HighLevelList());
-						setResultTable(new Vector());
+						setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
+						setResultTable(new Vector<Object>());
 						setParamVal(0);
 						setParamVal(MyF.getInt("ParamVal"));
 						setMacroList(
-							(HighLevelList) (MyF.getProperty("MacroList")));
+							(HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) (MyF.getProperty("MacroList")));
 						VersionBuffer.chkNul(getMacroList());
 						getResultTable().setSize(getParamVal());
 					}

@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import jundo.runtime.ExtMilieuRef;
 import meta.DataFormatException;
 import meta.HighLevelList;
+import meta.StdLowLevelList;
 import meta.VersionBuffer;
 import meta.WrapRuntimeException;
 import verdantium.EtherEvent;
@@ -198,7 +199,7 @@ public class HyperButton
 		bkgnd.setBackgroundState(DefaultBkgnd, true);
 		setParamVal(0);
 		setResultTable(new Vector<Object>());
-		setMacroList(new HighLevelList());
+		setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
 		setImageMode(NO_MODE);
 		setText(super.getText());
 		Class<?>[] types = {
@@ -311,16 +312,16 @@ public class HyperButton
 	 * Gets the list of macro instructions to be executed upon a button press.
 	 * @return The list of macro instructions to be executed upon a button press.
 	 */
-	public HighLevelList getMacroList() {
+	public HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> getMacroList() {
 		Object ret = model.pdxm_getMacroList(undoMgr.getCurrentMil());
-		return ((HighLevelList) ret);
+		return ((HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) ret);
 	}
 
 	/**
 	 * Sets the list of macro instructions to be executed upon a button press.
 	 * @param in The list of macro instructions to be executed upon a button press.
 	 */
-	public void setMacroList(HighLevelList in) {
+	public void setMacroList( HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> in ) {
 		ExtMilieuRef mil = model.pdxm_setMacroList(undoMgr.getCurrentMil(), in);
 		undoMgr.handleCommitTempChange(mil);
 	}
@@ -425,7 +426,7 @@ public class HyperButton
 	* @return The component that was added.
 	*/
 	protected Object handleProgramDirectorEvent(ProgramDirectorEvent e) {
-		setMacroList(new HighLevelList());
+		setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
 		setResultTable(new Vector<Object>());
 		setParamVal(1);
 		EtherEvent eCopy = null;
@@ -672,7 +673,7 @@ public class HyperButton
 		setImage(null);
 		setImageBytes(null);
 		setImageMode(NO_MODE);
-		setMacroList(new HighLevelList());
+		setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
 		setResultTable(new Vector<Object>());
 		setParamVal(0);
 		setText("Button");
@@ -722,12 +723,12 @@ public class HyperButton
 					VersionBuffer.chkNul(T_flavor);
 
 					if (T_flavor.getComponentName().equals("Hyper Button")) {
-						setMacroList(new HighLevelList());
+						setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
 						setResultTable(new Vector<Object>());
 						setParamVal(0);
 						setParamVal(MyF.getInt("ParamVal"));
 						setMacroList(
-							(HighLevelList) (MyF.getProperty("MacroList")));
+							(HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) (MyF.getProperty("MacroList")));
 						VersionBuffer.chkNul(getMacroList());
 						macroMap.readData(MyF);
 
@@ -755,12 +756,12 @@ public class HyperButton
 					}
 
 					if (T_flavor.getComponentName().equals("Macro Recorder")) {
-						setMacroList(new HighLevelList());
+						setMacroList(new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>());
 						setResultTable(new Vector<Object>());
 						setParamVal(0);
 						setParamVal(MyF.getInt("ParamVal"));
 						setMacroList(
-							(HighLevelList) (MyF.getProperty("MacroList")));
+							(HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) (MyF.getProperty("MacroList")));
 						VersionBuffer.chkNul(getMacroList());
 						getResultTable().setSize(getParamVal());
 					}

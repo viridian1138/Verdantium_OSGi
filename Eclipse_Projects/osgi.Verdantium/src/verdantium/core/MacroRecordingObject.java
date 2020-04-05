@@ -11,6 +11,7 @@ import java.util.Vector;
 
 import meta.HighLevelList;
 import meta.Meta;
+import meta.StdLowLevelList;
 import meta.WrapRuntimeException;
 import verdantium.EtherEvent;
 import verdantium.ProgramDirector;
@@ -176,7 +177,7 @@ public class MacroRecordingObject
 		MacroObject macroObj,
 		Object[] transmitter)
 		throws Throwable {
-		HighLevelList macroList = macroObj.getMacroList();
+		HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> macroList = macroObj.getMacroList();
 
 		Vector<Object> resultTbl = new Vector<Object>();
 		resultTbl.setSize(macroObj.getParamVal());
@@ -195,7 +196,7 @@ public class MacroRecordingObject
 	* @param resultTbl The table of macro parameter results.
 	*/
 	public static void playMacro(
-		HighLevelList macroList,
+		HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> macroList,
 		Object transmitter,
 		Vector<Object> resultTbl)
 		throws Throwable {
@@ -415,11 +416,11 @@ public class MacroRecordingObject
 		if (!(myMacro.getMacroList().empty())) {
 			myMacro.getMacroList().searchHead();
 			myMacro.getMacroList().left();
-			myMacro.getMacroList().insertRight(newNode);
+			myMacro.getMacroList().insertRight( newNode );
 			myMacro.getMacroList().setCopyMode(Meta.COPY_ALL);
 			myMacro.getMacroList().setEraseMode(Meta.ERASE_ALL);
 		} else {
-			myMacro.getMacroList().insertRight(newNode);
+			myMacro.getMacroList().insertRight( newNode );
 			myMacro.getMacroList().setCopyMode(Meta.COPY_ALL);
 			myMacro.getMacroList().setEraseMode(Meta.ERASE_ALL);
 		}

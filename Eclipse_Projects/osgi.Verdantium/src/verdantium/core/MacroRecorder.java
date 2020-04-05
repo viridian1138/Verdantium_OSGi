@@ -22,6 +22,7 @@ import javax.swing.border.MatteBorder;
 
 import meta.DataFormatException;
 import meta.HighLevelList;
+import meta.StdLowLevelList;
 import meta.VersionBuffer;
 import verdantium.Adapters;
 import verdantium.EtherEvent;
@@ -569,7 +570,7 @@ public class MacroRecorder extends ApplicationAdapter {
 	* @param resultTbl The table of macro parameter results.
 	*/
 	public static void playMacro(
-		HighLevelList macroList,
+		HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> macroList,
 		Object transmitter,
 		Vector<Object> resultTbl)
 		throws Throwable {

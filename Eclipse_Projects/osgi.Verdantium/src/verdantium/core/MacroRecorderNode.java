@@ -76,7 +76,7 @@ import verdantium.utils.IOResourceNotFoundException;
 * <P>
 * @author Thorn Green
 */
-public class MacroRecorderNode extends Meta implements Externalizable {
+public class MacroRecorderNode extends Meta<MacroRecorderNode> implements Externalizable {
 
 	/**
 	* Constructs the macro recorder node.

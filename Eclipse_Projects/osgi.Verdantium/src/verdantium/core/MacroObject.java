@@ -8,6 +8,7 @@ import java.io.ObjectOutput;
 import meta.DataFormatException;
 import meta.HighLevelList;
 import meta.VersionBuffer;
+import meta.StdLowLevelList;
 
 //$$strtCprt
 /*
@@ -80,7 +81,7 @@ public class MacroObject extends Object implements Externalizable {
 	/**
 	* The current list of macro commands.
 	*/
-	private HighLevelList macroList = new HighLevelList();
+	private HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> macroList = new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>();
 
 	/**
 	* Constructs the MacroObject.
@@ -98,7 +99,7 @@ public class MacroObject extends Object implements Externalizable {
 			VersionBuffer.chkNul(myv);
 
 			paramVal = myv.getInt("paramVal");
-			macroList = (HighLevelList) (myv.getProperty("macroList"));
+			macroList = (HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>) (myv.getProperty("macroList"));
 			VersionBuffer.chkNul(macroList);
 		} catch (ClassCastException e) {
 			throw (new DataFormatException(e));
@@ -118,7 +119,7 @@ public class MacroObject extends Object implements Externalizable {
 
 		if (MacroRecordingObject.getMacroIsPlaying()) {
 			myv.setInt("paramVal", 0);
-			myv.setProperty("macroList", new HighLevelList());
+			myv.setProperty("macroList", new HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>>() );
 		} else {
 			myv.setInt("paramVal", paramVal);
 			myv.setProperty("macroList", macroList);
@@ -147,7 +148,7 @@ public class MacroObject extends Object implements Externalizable {
 	* Gets the macro's instruction list.
 	* @return The macro's instruction list.
 	*/
-	public HighLevelList getMacroList() {
+	public HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> getMacroList() {
 		return (macroList);
 	}
 
@@ -155,7 +156,7 @@ public class MacroObject extends Object implements Externalizable {
 	* Sets the macro's instruction list.
 	* @param in The macro's instruction list.
 	*/
-	public void setMacroList(HighLevelList in) {
+	public void setMacroList( HighLevelList<MacroRecorderNode,StdLowLevelList<MacroRecorderNode>> in ) {
 		macroList = in;
 	}
 

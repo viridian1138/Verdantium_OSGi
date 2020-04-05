@@ -503,10 +503,10 @@ public class MacroRecorder extends ApplicationAdapter {
 
 					while (!Done) {
 						MacroRecorderNode MyNode =
-							(MacroRecorderNode) (macroRecorder
+							macroRecorder
 								.getMacro()
 								.getMacroList()
-								.getNode());
+								.getNode();
 						printEtherEventToList(
 							MyNode.getCopyEvent(),
 							MyNode.getCopyReply(),

@@ -214,7 +214,7 @@ public class MacroRecordingObject
 
 				while (!Done) {
 					MacroRecorderNode MyN =
-						(MacroRecorderNode) (macroList.getNode());
+						macroList.getNode();
 					EtherEvent in = MyN.getCopyEvent();
 					Object target = in.getTarget();
 					if (target instanceof MacroParameter)
@@ -551,7 +551,7 @@ public class MacroRecordingObject
 		myMacro.getMacroList().searchHead();
 		myMacro.getMacroList().left();
 		MacroRecorderNode MyN =
-			(MacroRecorderNode) (myMacro.getMacroList().getNode());
+			myMacro.getMacroList().getNode();
 		EtherEvent InCopy = MyN.getCopyEvent();
 		MyN.setOrigReply(reply);
 		MyN.setCopyReply(replyCopy);
